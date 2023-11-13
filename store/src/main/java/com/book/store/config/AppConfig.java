@@ -16,9 +16,9 @@ public class AppConfig {
     @Bean
     public DataSource getDataSource() {
         BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        basicDataSource.setUrl("jdbc:mysql://localhost:3306/book");
-        basicDataSource.setUsername("root");
+        basicDataSource.setDriverClassName("org.h2.Driver");
+        basicDataSource.setUrl("jdbc:h2:mem:testdb");
+        basicDataSource.setUsername("sa");
         basicDataSource.setPassword("password");
 
         basicDataSource.setMinIdle(5);
