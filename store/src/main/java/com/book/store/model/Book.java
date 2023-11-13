@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Data
@@ -20,17 +19,13 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private String title;
 
-    @NotNull
     private String author;
 
-    @NotNull
     @Column(unique = true)
     private String isbn;
 
-    @NotNull
     private BigDecimal price;
 
     private String description;
