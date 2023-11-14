@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@Transactional
 @RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private EntityManager entityManager;
@@ -32,8 +30,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        try {
-            Session session = sessionFactory.getCurrentSession();
+        try (Session session = sessionFactory.getCurrentSession()) {
             return session.createQuery("FROM Book", Book.class)
                     .getResultList();
         } catch (PersistenceException e) {
