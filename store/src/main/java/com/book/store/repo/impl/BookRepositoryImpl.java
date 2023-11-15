@@ -5,6 +5,7 @@ import com.book.store.repo.BookRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -37,4 +38,15 @@ public class BookRepositoryImpl implements BookRepository {
             throw new RuntimeException("Error finding all books", e);
         }
     }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        try (Session session = sessionFactory.getCurrentSession()) {
+            Book book = session.get(Book.class, id);
+            return Optional.ofNullable(book);
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Error finding book by id: " + id, e);
+        }
+    }
+
 }
