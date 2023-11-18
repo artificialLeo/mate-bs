@@ -1,7 +1,7 @@
 package com.book.store.service.impl;
 
 import com.book.store.dto.BookDto;
-import com.book.store.dto.CreateBookRequestDto;
+import com.book.store.dto.BookRequestDto;
 import com.book.store.exception.EntityNotFoundException;
 import com.book.store.mapper.BookMapper;
 import com.book.store.model.Book;
@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-    private BookRepository bookRepository;
-
-    private BookMapper bookMapper;
+    private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     @Override
     public Book save(Book book) {
@@ -28,7 +27,7 @@ public class BookServiceImpl implements BookService {
         return bookRepository
                 .findAll()
                 .stream()
-                .map(book -> bookMapper.toBookDto(book))
+                .map(bookMapper::toBookDto)
                 .toList();
     }
 
@@ -41,10 +40,37 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto createBook(CreateBookRequestDto bookDto) {
+    public BookDto createBook(BookRequestDto bookDto) {
         Book book = bookMapper.toBook(bookDto);
         Book savedBook = bookRepository.save(book);
         return bookMapper.toBookDto(savedBook);
     }
 
+    @Override
+    public BookDto updateBook(Long id, BookRequestDto updateBookDto) {
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(()
+                        -> new EntityNotFoundException("Book with id " + id + " not found."));
+
+        existingBook.setTitle(updateBookDto.getTitle());
+        existingBook.setAuthor(updateBookDto.getAuthor());
+        existingBook.setIsbn(updateBookDto.getIsbn());
+        existingBook.setPrice(updateBookDto.getPrice());
+        existingBook.setDescription(updateBookDto.getDescription());
+        existingBook.setCoverImage(updateBookDto.getCoverImage());
+
+        Book updatedBook = bookRepository.save(existingBook);
+
+        return bookMapper.toBookDto(updatedBook);
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Book with id " + id + " not found.");
+        }
+    }
 }
+
