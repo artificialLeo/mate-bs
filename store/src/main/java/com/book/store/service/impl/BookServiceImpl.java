@@ -7,11 +7,10 @@ import com.book.store.mapper.BookMapper;
 import com.book.store.model.Book;
 import com.book.store.repo.BookRepository;
 import com.book.store.service.BookService;
-import jakarta.persistence.criteria.Predicate;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -77,38 +76,12 @@ public class BookServiceImpl implements BookService {
             BigDecimal price,
             String description
     ) {
+        Specification<Book> bookSpecification
+                = new BookSpecifications(title, author, price, description);
+
         return bookRepository
-                .findAll((root, query, criteriaBuilder) -> {
-                    List<Predicate> predicates = new ArrayList<>();
-
-                    if (title != null && !title.isEmpty()) {
-                        predicates.add(criteriaBuilder
-                                .like(criteriaBuilder
-                                        .lower(root.get("title")), "%"
-                                        + title.toLowerCase() + "%"));
-                    }
-
-                    if (author != null && !author.isEmpty()) {
-                        predicates.add(criteriaBuilder
-                                .like(criteriaBuilder
-                                        .lower(root.get("author")), "%"
-                                        + author.toLowerCase() + "%"));
-                    }
-
-                    if (price != null) {
-                        predicates.add(criteriaBuilder
-                                .equal(root.get("price"), price));
-                    }
-
-                    if (description != null && !description.isEmpty()) {
-                        predicates.add(criteriaBuilder
-                                .like(criteriaBuilder
-                                        .lower(root.get("description")), "%"
-                                        + description.toLowerCase() + "%"));
-                    }
-
-                    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-                }).stream()
+                .findAll(bookSpecification)
+                .stream()
                 .map(bookMapper::toBookDto)
                 .toList();
     }
