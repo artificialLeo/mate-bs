@@ -7,8 +7,10 @@ import com.book.store.mapper.BookMapper;
 import com.book.store.model.Book;
 import com.book.store.repo.BookRepository;
 import com.book.store.service.BookService;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -66,5 +68,21 @@ public class BookServiceImpl implements BookService {
             throw new EntityNotFoundException("Book with id " + id + " not found.");
         }
     }
-}
 
+    @Override
+    public List<BookDto> searchBooks(
+            String title,
+            String author,
+            BigDecimal price,
+            String description
+    ) {
+        Specification<Book> bookSpecification
+                = new BookSpecifications(title, author, price, description);
+
+        return bookRepository
+                .findAll(bookSpecification)
+                .stream()
+                .map(bookMapper::toBookDto)
+                .toList();
+    }
+}

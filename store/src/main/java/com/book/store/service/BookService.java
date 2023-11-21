@@ -3,6 +3,7 @@ package com.book.store.service;
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
 import com.book.store.model.Book;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface BookService {
@@ -17,5 +18,6 @@ public interface BookService {
     BookDto updateBook(Long id, BookRequestDto updateBookDto);
 
     void deleteBook(Long id);
-}
 
+    List<BookDto> searchBooks(String title, String author, BigDecimal price, String description);
+}
