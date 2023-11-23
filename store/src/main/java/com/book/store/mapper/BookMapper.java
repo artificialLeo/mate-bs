@@ -4,10 +4,8 @@ import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
 import com.book.store.model.Book;
 import org.mapstruct.Mapper;
-import org.mapstruct.MapperConfig;
 
-@Mapper
-@MapperConfig(componentModel = "spring")
+@Mapper(config = MapperConfig.class)
 public interface BookMapper {
     BookDto toBookDto(Book book);
 
