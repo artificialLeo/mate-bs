@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,10 @@ public class BookController {
             @Parameter(description = "Sorting parameter") @RequestParam(required = false) String sort) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<BookDto> books = bookService.getAllBooks(pageable, sort);
-        return ResponseEntity.ok(books);
+        List<BookDto> books = bookService.getAllBooks(pageable);
+
+        return ResponseEntity.ok(new PageImpl<>(books, pageable, books.size()));
+
     }
 
     @GetMapping("/{id}")

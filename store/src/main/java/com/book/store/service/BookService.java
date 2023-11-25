@@ -12,7 +12,7 @@ import java.util.List;
 public interface BookService {
     Book save(Book book);
 
-    Page<BookDto> getAllBooks(Pageable pageable, String sort);
+    List<BookDto> getAllBooks(Pageable pageable);
 
     BookDto getBookById(Long id);
 

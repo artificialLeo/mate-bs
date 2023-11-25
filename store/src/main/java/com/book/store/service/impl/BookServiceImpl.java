@@ -28,12 +28,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookDto> getAllBooks(Pageable pageable, String sort) {
-        Page<Book> books = bookRepository.findAll(pageable);
-        List<BookDto> bookDtos = books.getContent().stream()
+    public List<BookDto> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable).stream()
                 .map(bookMapper::toBookDto)
                 .toList();
-        return new PageImpl<>(bookDtos, pageable, books.getTotalElements());
     }
 
 
