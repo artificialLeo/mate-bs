@@ -3,13 +3,16 @@ package com.book.store.service;
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
 import com.book.store.model.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface BookService {
     Book save(Book book);
 
-    List<BookDto> getAllBooks();
+    List<BookDto> getAllBooks(Pageable pageable);
 
     BookDto getBookById(Long id);
 

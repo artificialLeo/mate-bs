@@ -10,6 +10,9 @@ import com.book.store.service.BookService;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +28,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAllBooks() {
-        return bookRepository
-                .findAll()
-                .stream()
+    public List<BookDto> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable).stream()
                 .map(bookMapper::toBookDto)
                 .toList();
     }
+
 
     @Override
     public BookDto getBookById(Long id) {
