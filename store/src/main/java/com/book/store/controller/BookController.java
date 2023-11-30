@@ -6,6 +6,7 @@ import com.book.store.service.BookService;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.book.store.util.Utils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -34,22 +35,7 @@ public class BookController {
             @Parameter(description = "Page number (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Number of items per page", example = "10") @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "Sorting parameter") @RequestParam(required = false) String sort) {
-
-        Pageable pageable;
-
-        if (sort != null && !sort.isEmpty()) {
-            String[] sortParams = sort.split(",");
-            Sort sorting = Sort.by(sortParams[0]);
-
-            if (sortParams.length == 2 && (sortParams[1].equalsIgnoreCase("asc") || sortParams[1].equalsIgnoreCase("desc"))) {
-                sorting = sortParams[1].equalsIgnoreCase("asc") ? sorting.ascending() : sorting.descending();
-            }
-
-            pageable = PageRequest.of(page, size, sorting);
-        } else {
-            pageable = PageRequest.of(page, size);
-        }
-
+        Pageable pageable = Utils.createPageable(page, size, sort);
         List<BookDto> books = bookService.getAllBooks(pageable);
 
         return ResponseEntity.ok(new PageImpl<>(books, pageable, books.size()));
