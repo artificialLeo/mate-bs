@@ -1,21 +1,28 @@
 package com.book.store.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
 import com.book.store.service.BookService;
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/books")
@@ -31,29 +38,11 @@ public class BookController {
     @GetMapping
     @Operation(summary = "Get all books with pagination and sorting")
     public ResponseEntity<Page<BookDto>> getAll(
-            @Parameter(description = "Page number (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Number of items per page", example = "10") @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "Sorting parameter") @RequestParam(required = false) String sort) {
-
-        Pageable pageable;
-
-        if (sort != null && !sort.isEmpty()) {
-            String[] sortParams = sort.split(",");
-            Sort sorting = Sort.by(sortParams[0]);
-
-            if (sortParams.length == 2 && (sortParams[1].equalsIgnoreCase("asc") || sortParams[1].equalsIgnoreCase("desc"))) {
-                sorting = sortParams[1].equalsIgnoreCase("asc") ? sorting.ascending() : sorting.descending();
-            }
-
-            pageable = PageRequest.of(page, size, sorting);
-        } else {
-            pageable = PageRequest.of(page, size);
-        }
-
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         List<BookDto> books = bookService.getAllBooks(pageable);
-
         return ResponseEntity.ok(new PageImpl<>(books, pageable, books.size()));
     }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a book by ID")
