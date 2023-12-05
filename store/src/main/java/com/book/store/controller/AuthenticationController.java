@@ -25,7 +25,6 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registration")
-    @PreAuthorize("permitAll()")
     @Operation(summary = "New user creation")
     public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) throws RegistrationException {
         CreateUserResponse response = userService.registerUser(request);

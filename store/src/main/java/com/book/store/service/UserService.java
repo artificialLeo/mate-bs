@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface UserService {
     CreateUserResponse registerUser(CreateUserRequest request);
-
-    Optional<User> findByEmail(String email);
 }

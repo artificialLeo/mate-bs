@@ -37,7 +37,6 @@ public class BookController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get all books with pagination and sorting")
     public ResponseEntity<Page<BookDto>> getAll(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -47,7 +46,6 @@ public class BookController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get a book by ID")
     public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
         BookDto book = bookService.getBookById(id);
