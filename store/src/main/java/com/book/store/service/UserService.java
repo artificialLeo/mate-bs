@@ -1,11 +1,8 @@
 package com.book.store.service;
 
-import com.book.store.dto.CreateUserRequest;
-import com.book.store.dto.CreateUserResponse;
-import com.book.store.model.User;
-
-import java.util.Optional;
+import com.book.store.dto.CreateUserRequestDto;
+import com.book.store.dto.CreateUserResponseDto;
 
 public interface UserService {
-    CreateUserResponse registerUser(CreateUserRequest request);
+    CreateUserResponseDto registerUser(CreateUserRequestDto request);
 }

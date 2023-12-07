@@ -77,14 +77,15 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Search books based on criteria")
-    public ResponseEntity<List<BookDto>> searchBooks(
+    @Operation(summary = "Search books based on criteria with pagination and sorting")
+    public ResponseEntity<Page<BookDto>> searchBooks(
             @Parameter(description = "Title of the book") @RequestParam(required = false) String title,
             @Parameter(description = "Author of the book") @RequestParam(required = false) String author,
             @Parameter(description = "Price of the book") @RequestParam(required = false) BigDecimal price,
-            @Parameter(description = "Description of the book") @RequestParam(required = false) String description) {
+            @Parameter(description = "Description of the book") @RequestParam(required = false) String description,
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        List<BookDto> result = bookService.searchBooks(title, author, price, description);
+        Page<BookDto> result = bookService.searchBooks(title, author, price, description, pageable);
         return ResponseEntity.ok(result);
     }
 }

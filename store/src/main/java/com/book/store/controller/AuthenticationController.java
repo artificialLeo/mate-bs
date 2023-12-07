@@ -1,7 +1,7 @@
 package com.book.store.controller;
 
-import com.book.store.dto.CreateUserRequest;
-import com.book.store.dto.CreateUserResponse;
+import com.book.store.dto.CreateUserRequestDto;
+import com.book.store.dto.CreateUserResponseDto;
 import com.book.store.dto.UserLoginRequestDto;
 import com.book.store.dto.UserLoginResponseDto;
 import com.book.store.exception.RegistrationException;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +28,8 @@ public class AuthenticationController {
 
     @PostMapping("/registration")
     @Operation(summary = "New user creation")
-    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) throws RegistrationException {
-        CreateUserResponse response = userService.registerUser(request);
+    public ResponseEntity<CreateUserResponseDto> register(@Valid @RequestBody CreateUserRequestDto request) throws RegistrationException {
+        CreateUserResponseDto response = userService.registerUser(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

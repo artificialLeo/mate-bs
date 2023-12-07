@@ -1,20 +1,15 @@
 package com.book.store.mapper;
 
-import com.book.store.dto.CreateUserRequest;
-import com.book.store.dto.CreateUserResponse;
-import com.book.store.model.Role;
+import com.book.store.dto.CreateUserRequestDto;
+import com.book.store.dto.CreateUserResponseDto;
 import com.book.store.model.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(config = MapperConfig.class)
 public interface UserMapper {
 
-    User toUser(CreateUserRequest createUserRequest);
+    User toUser(CreateUserRequestDto createUserRequestDto);
 
-    CreateUserResponse toCreateUserResponse(User user);
+    CreateUserResponseDto toCreateUserResponse(User user);
 }
 

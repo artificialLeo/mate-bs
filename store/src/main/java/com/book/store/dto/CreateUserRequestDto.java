@@ -9,7 +9,7 @@ import lombok.Data;
 @FieldMatch.List({
         @FieldMatch(first = "password", second = "repeatPassword", message = "The password fields must match")
 })
-public class CreateUserRequest {
+public class CreateUserRequestDto {
     @NotBlank
     @Email
     private String email;
