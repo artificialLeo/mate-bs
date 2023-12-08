@@ -31,9 +31,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers(
                                         "/auth/**",
-                                        "/swagger-ui/**",
-                                        "/api/categories",
-                                        "/api/categories/**/books"
+                                        "/swagger-ui/**"
                                 )
                                 .hasRole("ADMIN")
                                 .anyRequest().authenticated()
