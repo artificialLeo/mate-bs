@@ -13,7 +13,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -34,7 +41,12 @@ public class CategoryController {
     @GetMapping
     @Operation(summary = "Get all categories with pagination and sorting")
     public ResponseEntity<Page<CategoryDto>> getAll(
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(
+                    page = 0,
+                    size = 10,
+                    sort = "id",
+                    direction = Sort.Direction.ASC
+            ) Pageable pageable) {
         Page<CategoryDto> categories = categoryService.findAll(pageable);
         return ResponseEntity.ok(categories);
     }
@@ -48,7 +60,10 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update category")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> updateCategory(
+            @PathVariable Long id,
+            @RequestBody CategoryDto categoryDto
+    ) {
         CategoryDto updatedCategory = categoryService.update(id, categoryDto);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
@@ -64,7 +79,12 @@ public class CategoryController {
     @Operation(summary = "Get books by category ID with pagination and sorting")
     public ResponseEntity<Page<BookDto>> getBooksByCategoryId(
             @PathVariable Long id,
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(
+                    page = 0,
+                    size = 10,
+                    sort = "id",
+                    direction = Sort.Direction.ASC
+            ) Pageable pageable) {
         Page<BookDto> booksByCategoryId = bookService.findAllByCategoryId(id, pageable);
         return ResponseEntity.ok(booksByCategoryId);
     }

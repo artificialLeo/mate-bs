@@ -9,11 +9,8 @@ import com.book.store.repo.BookRepository;
 import com.book.store.service.BookService;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -35,7 +32,6 @@ public class BookServiceImpl implements BookService {
                 .map(bookMapper::toDto)
                 .toList();
     }
-
 
     @Override
     public BookDto getBookById(Long id) {
@@ -70,16 +66,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookDto> searchBooks(
+    public List<BookDto> searchBooks(
             String title,
             String author,
             BigDecimal price,
-            String description,
-            Pageable pageable) {
-        Specification<Book> bookSpecification = new BookSpecifications(title, author, price, description);
+            String description
+    ) {
+        Specification<Book> bookSpecification
+                = new BookSpecifications(title, author, price, description);
 
-        Page<Book> booksPage = bookRepository.findAll(bookSpecification, pageable);
-        return booksPage.map(bookMapper::toDto);
+        return bookRepository
+                .findAll(bookSpecification)
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
     }
 
     @Override

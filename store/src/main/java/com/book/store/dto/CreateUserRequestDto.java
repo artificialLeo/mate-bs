@@ -7,7 +7,11 @@ import lombok.Data;
 
 @Data
 @FieldMatch.List({
-        @FieldMatch(first = "password", second = "repeatPassword", message = "The password fields must match")
+        @FieldMatch(
+                first = "password",
+                second = "repeatPassword",
+                message = "The password fields must match"
+        )
 })
 public class CreateUserRequestDto {
     @NotBlank

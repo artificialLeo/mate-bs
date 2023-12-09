@@ -20,6 +20,10 @@
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
 		<jjwt.version>0.11.5</jjwt.version>
 		<liquid-base.version>4.25.0</liquid-base.version>
+		<maven.checkstyle.plugin.configLocation>
+			https://raw.githubusercontent.com/mate-academy/style-guides/master/java/checkstyle.xml
+		</maven.checkstyle.plugin.configLocation>
+		<maven.checkstyle.plugin.configLocation>checkstyle.xml</maven.checkstyle.plugin.configLocation>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -177,6 +181,25 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configLocation>${maven.checkstyle.plugin.configLocation}</configLocation>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>true</failsOnError>
+					<linkXRef>false</linkXRef>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

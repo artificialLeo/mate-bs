@@ -3,10 +3,9 @@ package com.book.store.mapper;
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookDtoWithoutCategoryIds;
 import com.book.store.dto.BookRequestDto;
+import com.book.store.model.Book;
 import com.book.store.model.Category;
 import java.util.List;
-
-import com.book.store.model.Book;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

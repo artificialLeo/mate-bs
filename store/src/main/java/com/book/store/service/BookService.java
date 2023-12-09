@@ -3,11 +3,10 @@ package com.book.store.service;
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
 import com.book.store.model.Book;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BookService {
     Book save(Book book);
@@ -22,7 +21,12 @@ public interface BookService {
 
     void deleteBook(Long id);
 
-    Page<BookDto> searchBooks(String title, String author, BigDecimal price, String description, Pageable pageable);
+    List<BookDto> searchBooks(
+            String title,
+            String author,
+            BigDecimal price,
+            String description
+    );
 
     Page<BookDto> findAllByCategoryId(Long categoryId, Pageable pageable);
 
