@@ -28,4 +28,3 @@ public class UserServiceImpl implements UserService {
         return userMapper.toCreateUserResponse(savedUser);
     }
 }
-

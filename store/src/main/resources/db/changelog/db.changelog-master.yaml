@@ -33,7 +33,6 @@ databaseChangeLog:
               - column:
                   name: isDeleted
                   type: BOOLEAN
-              # Add columns for other fields and relationships
 
   - changeSet:
       id: createCategoryTable
@@ -57,7 +56,6 @@ databaseChangeLog:
               - column:
                   name: description
                   type: VARCHAR(255)
-              # Add columns for other fields and relationships
 
   - changeSet:
       id: createRoleTable
@@ -77,7 +75,6 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     unique: true
-              # Add columns for other fields and relationships
 
   - changeSet:
       id: createUserTable
@@ -109,4 +106,3 @@ databaseChangeLog:
               - column:
                   name: shippingAddress
                   type: VARCHAR(255)
-              # Add columns for other fields and relationships

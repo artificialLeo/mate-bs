@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
@@ -44,6 +43,4 @@ public class AuthenticationController {
                 HttpStatus.ACCEPTED
         );
     }
-
 }
-

@@ -29,5 +29,4 @@ public interface BookService {
     );
 
     Page<BookDto> findAllByCategoryId(Long categoryId, Pageable pageable);
-
 }

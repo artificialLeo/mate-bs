@@ -7,6 +7,5 @@ import lombok.Data;
 public class CategoryDto {
     @NotBlank
     private String name;
-
     private String description;
 }

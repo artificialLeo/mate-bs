@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(config = MapperConfig.class)
 public interface UserMapper {
-
     User toUser(CreateUserRequestDto createUserRequestDto);
 
     CreateUserResponseDto toCreateUserResponse(User user);

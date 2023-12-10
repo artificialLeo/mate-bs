@@ -15,7 +15,6 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE categories SET is_deleted = true WHERE id=?;")
 @Where(clause = "is_deleted = false")
 public class Category {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +24,5 @@ public class Category {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
     private String description;
 }

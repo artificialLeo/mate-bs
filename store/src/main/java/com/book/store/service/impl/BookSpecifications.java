@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 public class BookSpecifications implements Specification<Book> {
-
     private String title;
     private String author;
     private BigDecimal price;
@@ -58,4 +57,3 @@ public class BookSpecifications implements Specification<Book> {
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 }
-

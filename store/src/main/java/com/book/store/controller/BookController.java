@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/books")
 @Validated
 public class BookController {
-
     private final BookService bookService;
 
     public BookController(BookService bookService) {

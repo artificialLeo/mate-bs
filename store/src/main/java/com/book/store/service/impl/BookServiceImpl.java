@@ -87,5 +87,4 @@ public class BookServiceImpl implements BookService {
         Page<Book> booksPage = bookRepository.findAllByCategoryId(categoryId, pageable);
         return booksPage.map(bookMapper::toDto);
     }
-
 }

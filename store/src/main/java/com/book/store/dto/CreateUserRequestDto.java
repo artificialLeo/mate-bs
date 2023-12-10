@@ -33,4 +33,3 @@ public class CreateUserRequestDto {
     @NotBlank
     private String shippingAddress;
 }
-
