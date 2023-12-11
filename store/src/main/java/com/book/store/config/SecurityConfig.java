@@ -42,6 +42,7 @@ public class SecurityConfig {
                 )
                 .formLogin(withDefaults())
                 .userDetailsService(userDetailsService);
+
         return http.build();
     }
 
