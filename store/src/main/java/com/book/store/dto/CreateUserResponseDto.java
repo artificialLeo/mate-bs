@@ -3,7 +3,7 @@ package com.book.store.dto;
 import lombok.Data;
 
 @Data
-public class CreateUserResponse {
+public class CreateUserResponseDto {
     private Long id;
     private String email;
     private String firstName;

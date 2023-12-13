@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
     private JwtUtil jwtUtil;
-
     private AuthenticationManager authenticationManager;
 
     public UserLoginResponseDto authenticate(UserLoginRequestDto request) {

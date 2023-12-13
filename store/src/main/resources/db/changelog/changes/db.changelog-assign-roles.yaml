@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: assignRolesToExistingUsers
+      author: your_author_name
+      changes:
+        - sql:
+            sql: UPDATE user_roles SET role_id = (SELECT id FROM role WHERE name = 'ROLE_USER');

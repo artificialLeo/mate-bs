@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -30,24 +29,23 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable).stream()
-                .map(bookMapper::toBookDto)
+                .map(bookMapper::toDto)
                 .toList();
     }
-
 
     @Override
     public BookDto getBookById(Long id) {
         return bookRepository.findById(id)
-                .map(bookMapper::toBookDto)
+                .map(bookMapper::toDto)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Book with id " + id + " not found."));
     }
 
     @Override
     public BookDto createBook(BookRequestDto bookDto) {
-        Book book = bookMapper.toBook(bookDto);
+        Book book = bookMapper.toEntity(bookDto);
         Book savedBook = bookRepository.save(book);
-        return bookMapper.toBookDto(savedBook);
+        return bookMapper.toDto(savedBook);
     }
 
     @Override
@@ -56,19 +54,15 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(()
                         -> new EntityNotFoundException("Book with id " + id + " not found."));
 
-        bookMapper.toBook(updateBookDto);
+        bookMapper.toEntity(updateBookDto);
         Book updatedBook = bookRepository.save(existingBook);
 
-        return bookMapper.toBookDto(updatedBook);
+        return bookMapper.toDto(updatedBook);
     }
 
     @Override
     public void deleteBook(Long id) {
-        if (bookRepository.existsById(id)) {
-            bookRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Book with id " + id + " not found.");
-        }
+        bookRepository.deleteById(id);
     }
 
     @Override
@@ -84,7 +78,13 @@ public class BookServiceImpl implements BookService {
         return bookRepository
                 .findAll(bookSpecification)
                 .stream()
-                .map(bookMapper::toBookDto)
+                .map(bookMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public Page<BookDto> findAllByCategoryId(Long categoryId, Pageable pageable) {
+        Page<Book> booksPage = bookRepository.findAllByCategoryId(categoryId, pageable);
+        return booksPage.map(bookMapper::toDto);
     }
 }
