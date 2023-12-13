@@ -8,6 +8,7 @@ import com.book.store.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,11 +35,53 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(
-                                        "/auth/**",
-                                        "/swagger-ui/**"
+                                        "/api/auth/register",
+                                        "/api/auth/login")
+                                .permitAll()
+                                .requestMatchers(
+                                        "/api/books/**"
+                                )
+                                .hasRole("USER")
+                                .requestMatchers(
+                                        "/api/categories/**"
+                                )
+                                .hasRole("USER")
+                                .requestMatchers(
+                                        "/api/cart/**"
+                                )
+                                .hasRole("USER")
+                                .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/api/books/"
                                 )
                                 .hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                                .requestMatchers(
+                                        HttpMethod.PUT,
+                                        "/api/books/{id}"
+                                )
+                                .hasRole("ADMIN")
+                                .requestMatchers(
+                                        HttpMethod.DELETE,
+                                        "/api/books/{id}"
+                                )
+                                .hasRole("ADMIN")
+                                .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/api/categories"
+                                )
+                                .hasRole("ADMIN")
+                                .requestMatchers(
+                                        HttpMethod.PUT,
+                                        "/api/categories/{id}"
+                                )
+                                .hasRole("ADMIN")
+                                .requestMatchers(
+                                        HttpMethod.DELETE,
+                                        "/api/categories/{id}"
+                                )
+                                .hasRole("ADMIN")
+                                .anyRequest()
+                                .authenticated()
                 )
                 .formLogin(withDefaults())
                 .userDetailsService(userDetailsService);
