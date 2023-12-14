@@ -1,13 +1,14 @@
 package com.book.store.service;
 
-import com.book.store.model.ShoppingCart;
+import com.book.store.dto.CartItemResponseDto;
+import com.book.store.dto.ShoppingCartResponseDto;
 
 public interface ShoppingCartService {
-    ShoppingCart getUserShoppingCart(Long userId);
+    ShoppingCartResponseDto getUserShoppingCart(Long userId);
 
-    ShoppingCart addBookToCart(Long userId, Long bookId, int quantity);
+    ShoppingCartResponseDto addBookToCart(Long userId, Long bookId, int quantity);
 
-    ShoppingCart updateCartItemQuantity(Long cartItemId, int quantity);
+    CartItemResponseDto updateCartItemQuantity(Long cartItemId, int quantity);
 
     void removeBookFromCart(Long cartItemId);
 }

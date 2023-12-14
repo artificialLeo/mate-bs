@@ -1,5 +1,8 @@
 package com.book.store.service.impl;
 
+import com.book.store.dto.CartItemResponseDto;
+import com.book.store.dto.ShoppingCartResponseDto;
+import com.book.store.mapper.ShoppingCartMapper;
 import com.book.store.model.Book;
 import com.book.store.model.CartItem;
 import com.book.store.model.ShoppingCart;
@@ -14,19 +17,19 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-
     private final ShoppingCartRepository shoppingCartRepository;
     private final BookRepository bookRepository;
     private final CartItemRepository cartItemRepository;
+    private final ShoppingCartMapper shoppingCartMapper;
 
     @Override
-    public ShoppingCart getUserShoppingCart(Long userId) {
+    public ShoppingCartResponseDto getUserShoppingCart(Long userId) {
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository.findByUser_Id(userId);
-        return optionalShoppingCart.orElse(null);
+        return shoppingCartMapper.mapToShoppingCartResponse(optionalShoppingCart.orElse(null));
     }
 
     @Override
-    public ShoppingCart addBookToCart(Long userId, Long bookId, int quantity) {
+    public ShoppingCartResponseDto addBookToCart(Long userId, Long bookId, int quantity) {
         Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository.findByUser_Id(userId);
         ShoppingCart shoppingCart = optionalShoppingCart.orElse(new ShoppingCart());
 
@@ -41,18 +44,19 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         shoppingCartRepository.save(shoppingCart);
-        return shoppingCart;
+
+        return shoppingCartMapper.mapToShoppingCartResponse(shoppingCart);
     }
 
     @Override
-    public ShoppingCart updateCartItemQuantity(Long cartItemId, int quantity) {
+    public CartItemResponseDto updateCartItemQuantity(Long cartItemId, int quantity) {
         Optional<CartItem> optionalCartItem = cartItemRepository.findById(cartItemId);
         optionalCartItem.ifPresent(cartItem -> {
             cartItem.setQuantity(quantity);
             cartItemRepository.save(cartItem);
         });
 
-        return null;
+        return shoppingCartMapper.mapToCartItemResponse(optionalCartItem.orElseThrow());
     }
 
     @Override
