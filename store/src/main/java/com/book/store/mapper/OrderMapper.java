@@ -1,0 +1,25 @@
+package com.book.store.mapper;
+
+import com.book.store.dto.OrderDto;
+import com.book.store.dto.OrderItemDto;
+import com.book.store.model.Order;
+import com.book.store.model.OrderItem;
+import java.util.Set;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(config = MapperConfig.class)
+public interface OrderMapper {
+
+    @Mapping(source = "orderItems", target = "orderItems")
+    OrderDto mapToOrderDto(Order order);
+
+    @Mapping(source = "book.id", target = "bookId")
+    OrderItemDto mapToOrderItemDto(OrderItem orderItem);
+
+    Set<OrderItemDto> mapToOrderItemDtoSet(Set<OrderItem> orderItems);
+
+    Order mapToOrderEntity(OrderDto orderDto);
+
+    Set<Order> mapToOrderEntitySet(Set<OrderDto> orderDto);
+}
