@@ -5,7 +5,6 @@ import com.book.store.service.OrderItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +21,7 @@ public class OrderItemController {
     @GetMapping
     public ResponseEntity<Set<OrderItemDto>> getAllOrderItems(@PathVariable Long orderId) {
         Set<OrderItemDto> orderItems = orderItemService.getAllOrderItems(orderId);
-        return new ResponseEntity<>(orderItems, HttpStatus.OK);
+        return ResponseEntity.ok(orderItems);
     }
 
     @Operation(summary = "Retrieve a specific OrderItem within an order")
@@ -32,6 +31,6 @@ public class OrderItemController {
             @PathVariable Long itemId
     ) {
         OrderItemDto orderItem = orderItemService.getOrderItem(orderId, itemId);
-        return new ResponseEntity<>(orderItem, HttpStatus.OK);
+        return ResponseEntity.ok(orderItem);
     }
 }

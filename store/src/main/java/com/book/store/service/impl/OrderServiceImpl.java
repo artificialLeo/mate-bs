@@ -7,9 +7,8 @@ import com.book.store.model.Order;
 import com.book.store.model.Status;
 import com.book.store.repo.OrderRepository;
 import com.book.store.service.OrderService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,9 +25,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderDto> getUserOrderHistory(Pageable pageable) {
-        Page<Order> userOrders = orderRepository.findAll(pageable);
-        return userOrders.map(orderMapper::mapToOrderDto);
+    public List<OrderDto> getUserOrderHistory() {
+        List<Order> userOrders = orderRepository.findAll();
+        return userOrders
+                .stream()
+                .map(orderMapper::mapToOrderDto)
+                .toList();
     }
 
     @Override

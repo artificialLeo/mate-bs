@@ -30,7 +30,7 @@ public class AuthenticationController {
             @Valid @RequestBody CreateUserRequestDto request
     ) throws RegistrationException {
         CreateUserResponseDto response = userService.registerUser(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
@@ -38,9 +38,8 @@ public class AuthenticationController {
     public ResponseEntity<UserLoginResponseDto> login(
             @Valid @RequestBody UserLoginRequestDto request
     ) {
-        return new ResponseEntity<>(
-                authenticationService.authenticate(request),
-                HttpStatus.ACCEPTED
-        );
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(authenticationService.authenticate(request));
     }
 }
