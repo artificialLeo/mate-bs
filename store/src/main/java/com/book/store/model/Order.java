@@ -18,11 +18,15 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE orders SET is_deleted = true WHERE id=?;")
+@Where(clause = "is_deleted = false")
 public class Order {
     @Column(nullable = false)
     @Id

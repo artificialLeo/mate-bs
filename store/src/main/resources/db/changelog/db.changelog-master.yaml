@@ -5,3 +5,7 @@ databaseChangeLog:
       file: /db/changelog/changes/db.changelog-assign-roles.yaml
   - include:
       file: /db/changelog/changes/db.shopping-cart.yaml
+  - include:
+      file: /db/changelog/changes/db.changelog-order.yaml
+  - include:
+      file: /db/changelog/changes/db.changelog-order-item.yaml
