@@ -34,7 +34,9 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
         CategoryDto createdCategory = categoryService.save(categoryDto);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdCategory);
     }
 
     @GetMapping
@@ -54,7 +56,7 @@ public class CategoryController {
     @Operation(summary = "Get category by ID")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
         CategoryDto category = categoryService.getById(id);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+        return ResponseEntity.ok(category);
     }
 
     @PutMapping("/{id}")
@@ -64,14 +66,14 @@ public class CategoryController {
             @RequestBody CategoryDto categoryDto
     ) {
         CategoryDto updatedCategory = categoryService.update(id, categoryDto);
-        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+        return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete category")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/books")

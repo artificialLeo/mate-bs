@@ -30,7 +30,7 @@ public class ShoppingCartController {
     public ResponseEntity<ShoppingCartResponseDto> getUserShoppingCart(Long userId) {
         ShoppingCartResponseDto shoppingCart = shoppingCartService.getUserShoppingCart(userId);
 
-        return new ResponseEntity<>(shoppingCart, HttpStatus.ACCEPTED);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(shoppingCart);
     }
 
     @Operation(summary = "Add book to the shopping cart")
@@ -42,7 +42,7 @@ public class ShoppingCartController {
         ShoppingCartResponseDto shoppingCart = shoppingCartService
                 .addBookToCart(userId, request.getBookId(), request.getQuantity());
 
-        return new ResponseEntity<>(shoppingCart, HttpStatus.ACCEPTED);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(shoppingCart);
     }
 
     @Operation(summary = "Update quantity of a book in the shopping cart")
@@ -54,7 +54,7 @@ public class ShoppingCartController {
         CartItemResponseDto shoppingCart = shoppingCartService
                 .updateCartItemQuantity(cartItemId, request.getQuantity());
 
-        return new ResponseEntity<>(shoppingCart, HttpStatus.ACCEPTED);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(shoppingCart);
     }
 
     @Operation(summary = "Remove a book from the shopping cart")
@@ -62,6 +62,6 @@ public class ShoppingCartController {
     public ResponseEntity<Void> removeBookFromCart(@PathVariable Long cartItemId) {
         shoppingCartService.removeBookFromCart(cartItemId);
 
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }
