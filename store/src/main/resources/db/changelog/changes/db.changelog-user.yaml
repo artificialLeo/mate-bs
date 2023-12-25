@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: createUsersTable
+      author: kh
+      changes:
+        - createTable:
+            tableName: Users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: firstName
+                  type: VARCHAR(255)
+              - column:
+                  name: lastName
+                  type: VARCHAR(255)
+              - column:
+                  name: shippingAddress
+                  type: VARCHAR(255)

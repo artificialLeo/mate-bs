@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: createShoppingCartTable
-      author: author_name
+      author: kh
       changes:
         - createTable:
             tableName: shopping_cart
@@ -17,8 +17,24 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     foreignKeyName: fk_user_id
-                    references: user(id)
+                    references: Users(id)
               - column:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: addForeignKeyConstraintShoppingCart
+      author: kh
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: shopping_cart
+            constraintName: FK254qp5akhuaaj9n5co4jww3fk
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Users
+            validate: true

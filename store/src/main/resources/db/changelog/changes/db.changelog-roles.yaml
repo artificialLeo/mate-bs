@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       id: createRoleTable
-      author: author_name
+      author: kh
       changes:
         - createTable:
-            tableName: role
+            tableName: Role
             columns:
               - column:
                   name: id

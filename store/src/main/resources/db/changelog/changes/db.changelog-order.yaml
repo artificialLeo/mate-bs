@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: createOrderTable
-      author: author_name
+      author: kh
       changes:
         - createTable:
             tableName: "order"
@@ -15,9 +15,9 @@ databaseChangeLog:
               - column:
                   name: user_id
                   type: BIGINT
-                  constraints:
-                    foreignKeyName: fk_user_id
-                    references: user(id)
+#                  constraints:
+#                    foreignKeyName: fk_user_id
+#                    references: Users(id)
               - column:
                   name: status
                   type: VARCHAR(255)

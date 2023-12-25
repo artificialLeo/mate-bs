@@ -31,6 +31,8 @@ public class BookSpecifications implements Specification<Book> {
     ) {
         List<Predicate> predicates = new ArrayList<>();
 
+        predicates.add(criteriaBuilder.isFalse(root.get("isDeleted")));
+
         if (title != null && !title.isEmpty()) {
             predicates.add(criteriaBuilder
                     .like(criteriaBuilder

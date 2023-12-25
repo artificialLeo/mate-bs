@@ -1,7 +1,36 @@
 databaseChangeLog:
   - changeSet:
-      id: assignRolesToExistingUsers
-      author: author_name
+      id: createRoleTable
+      author: kh
       changes:
-        - sql:
-            sql: UPDATE user_roles SET role_id = (SELECT id FROM role WHERE name = 'ROLE_USER');
+        - createTable:
+            tableName: USER_ROLES
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: role_id
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+
+  - changeSet:
+      id: 1692130073510-6
+      author: kh
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: role_id
+            baseTableName: USER_ROLES
+            constraintName: FKj6m8fwv7oqv74fcehir1a9ffy
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Role
+            validate: true
