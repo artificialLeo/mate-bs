@@ -4,7 +4,7 @@ databaseChangeLog:
       author: kh
       changes:
         - createTable:
-            tableName: "order"
+            tableName: order
             columns:
               - column:
                   name: id

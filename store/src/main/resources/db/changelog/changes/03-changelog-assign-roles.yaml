@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: createRoleTable
+      id: createUsersTable
       author: kh
       changes:
         - createTable:
-            tableName: USER_ROLES
+            tableName: user_roles
             columns:
               - column:
                   name: id
@@ -25,7 +25,7 @@ databaseChangeLog:
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: role_id
-            baseTableName: USER_ROLES
+            baseTableName: user_roles
             constraintName: FKj6m8fwv7oqv74fcehir1a9ffy
             deferrable: false
             initiallyDeferred: false
