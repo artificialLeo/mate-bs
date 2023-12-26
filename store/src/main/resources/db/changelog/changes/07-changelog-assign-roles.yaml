@@ -32,5 +32,5 @@ databaseChangeLog:
             onDelete: RESTRICT
             onUpdate: RESTRICT
             referencedColumnNames: id
-            referencedTableName: Role
+            referencedTableName: role
             validate: true
