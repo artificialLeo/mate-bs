@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: createUsersTable
+      author: kh
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: role_id
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+
+  - changeSet:
+      id: 1692130073510-6
+      author: kh
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: role_id
+            baseTableName: user_roles
+            constraintName: FKj6m8fwv7oqv74fcehir1a9ffy
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Role
+            validate: true
