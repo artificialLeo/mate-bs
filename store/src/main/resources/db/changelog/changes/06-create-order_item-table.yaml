@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: createOrderItemTable
+      id: create-order-item-table
       author: kh
       changes:
         - createTable:
@@ -10,6 +10,8 @@ databaseChangeLog:
                   name: id
                   type: BIGINT
                   autoIncrement: true
+                  constraints:
+                    primaryKey: true
               - column:
                   name: order_id
                   type: BIGINT
@@ -26,4 +28,3 @@ databaseChangeLog:
                   type: DECIMAL(19, 2)
                   constraints:
                     nullable: false
-
