@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: createOrderTable
+      id: create-order-table
       author: kh
       changes:
         - createTable:

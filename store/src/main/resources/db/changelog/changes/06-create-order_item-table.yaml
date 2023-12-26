@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: create-order-item-table
-      author: your_name
+      author: kh
       changes:
         - createTable:
             tableName: order_item
