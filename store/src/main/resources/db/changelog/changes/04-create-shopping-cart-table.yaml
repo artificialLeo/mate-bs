@@ -18,7 +18,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
-                    references: users(id)
+                    references: user(id)
                     foreignKeyName: fk_shopping-carts_user_id
                     deleteCascade: true
               - column:

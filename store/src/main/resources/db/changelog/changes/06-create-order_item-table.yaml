@@ -15,6 +15,9 @@ databaseChangeLog:
               - column:
                   name: order_id
                   type: BIGINT
+                  constraints:
+                    foreignKeyName: FK_order_item_order
+                    references: order(id)
               - column:
                   name: book_id
                   type: BIGINT
