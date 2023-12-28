@@ -1,8 +1,13 @@
 package com.book.store;
 
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class StoreApplicationTests {
+public class StoreApplicationTests {
 
+    @Test
+    void contextLoads() {
+
+    }
 }
