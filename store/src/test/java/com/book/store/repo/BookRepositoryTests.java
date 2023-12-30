@@ -1,6 +1,8 @@
 package com.book.store.repo;
 
+import com.book.store.config.CustomMySqlContainer;
 import com.book.store.model.Book;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +15,17 @@ import java.math.BigDecimal;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class BookRepositoryTests {
+
     @Autowired
     private BookRepository bookRepository;
+
+    private CustomMySqlContainer customMySqlContainer;
+
+    @Before
+    public void setUp() {
+        customMySqlContainer = CustomMySqlContainer.getInstance();
+        customMySqlContainer.start();
+    }
 
     @Test
     @DisplayName("""
@@ -29,6 +40,7 @@ public class BookRepositoryTests {
 
         Book result = bookRepository.findById(1L).orElseThrow();
 
-        Assertions.assertEquals(1, book.getId());
+        Assertions.assertEquals(1, result.getId());
     }
 }
+
