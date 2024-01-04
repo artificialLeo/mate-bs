@@ -1,90 +1,110 @@
 package com.book.store.controller;
 
+import com.book.store.config.TestDataInitializer;
 import com.book.store.dto.BookDto;
-import com.book.store.mapper.BookMapper;
-import com.book.store.service.BookService;
-import org.json.JSONException;
-import org.junit.jupiter.api.DisplayName;
+import com.book.store.model.Book;
+import com.book.store.model.Category;
+import com.book.store.repo.BookRepository;
+import com.book.store.repo.CategoryRepository;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.net.URL;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BookControllerIntegrationTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private BookService bookService;
+    private TestDataInitializer testDataInitializer;
 
-//    @Test
-//    @DisplayName("Given available books in the database, retrieve the next available book")
-//    public void getNextAvailableBook_BooksAvailable_ReturnsExpectedBook() {
-//        // Mocking the BookService response
-//        when(bookService.getAllBooks(any())).thenReturn(books);
-//
-//        // when
-//        String actual = restTemplate.getForObject("/api/books/next", String.class);
-//
-//        // then
-//        assertEquals("Book Title 1", actual);
-//    }
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-    @Test
-    @DisplayName("Retrieve all books from API and compare with expected JSON")
-    public void getAllBooksFromApi_ReturnsExpectedJson() throws JSONException {
-        // Mocking the BookService response
-        BookDto book1 = new BookDto(
-                1L, "Book Title 1", "Author 1", "ISBN-123456", BigDecimal.valueOf(19.99),
-                "Description 1", "cover1.jpg", Arrays.asList(1L, 2L));
+    @Autowired
+    private ObjectMapper objectMapper;
 
-        BookDto book2 = new BookDto(
-                2L, "Book Title 2", "Author 2", "ISBN-654321", BigDecimal.valueOf(29.99),
-                "Description 2", "cover2.jpg", Arrays.asList(3L, 4L, 5L));
+    private MockMvc mockMvc;
 
-        List<BookDto> books = Arrays.asList(book1, book2);
-
-        bookService.save(BookMapper.);
-        bookService.save(book2);
-
-        // Mocking the Pageable
-        Pageable pageable = PageRequest.of(0, 10);
-
-        when(bookService.getAllBooks(any(Pageable.class))).thenReturn(books);
-
-        // when
-        String actualJson = restTemplate.getForObject("/api/books", String.class);
-
-        // then
-        String expectedJson = "[{\"id\":1,\"title\":\"Book Title 1\",\"author\":\"Author 1\"," +
-                "\"isbn\":\"ISBN-123456\",\"price\":19.99,\"description\":\"Description 1\"," +
-                "\"cover_image\":\"cover1.jpg\",\"category_ids\":[1,2]}," +
-                "{\"id\":2,\"title\":\"Book Title 2\",\"author\":\"Author 2\"," +
-                "\"isbn\":\"ISBN-654321\",\"price\":29.99,\"description\":\"Description 2\"," +
-                "\"cover_image\":\"cover2.jpg\",\"category_ids\":[3,4,5]}]";
-
-        JSONAssert.assertEquals(expectedJson, actualJson, false);
+    @BeforeEach
+    public void setUp() {
+//        testDataInitializer.initializeTestData();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
+    @Test
+    public void getBookByIdUsingMockMvc() throws Exception {
+        Category category = new Category();
+        category.setName("Test Category");
+        category.setDescription("Category Description");
+        categoryRepository.save(category);
+
+        Book book1 = new Book();
+        book1.setTitle("Book 1");
+        book1.setAuthor("Author 1");
+        book1.setIsbn("1234566690123");
+        book1.setPrice(BigDecimal.valueOf(29.99));
+        book1.setDescription("Description 1");
+        book1.setCoverImage("cover1.jpg");
+        book1.getCategories().add(category);
+        bookRepository.save(book1);
+
+        String responseContent = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/books/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        BookDto bookDto = objectMapper.readValue(responseContent, BookDto.class);
+
+        assertEquals(1L, bookDto.getId());
+        assertEquals("Book 1", bookDto.getTitle());
+        assertEquals("Author 1", bookDto.getAuthor());
+        assertEquals("1234562390123", bookDto.getIsbn());
+        assertEquals(BigDecimal.valueOf(29.99), bookDto.getPrice());
+        assertEquals("Description 1", bookDto.getDescription());
+        assertEquals("cover1.jpg", bookDto.getCoverImage());
+
+        List<Long> categoryIds = bookDto.getCategoryIds();
+        assertNotNull(categoryIds);
+        assertFalse(categoryIds.isEmpty());
+        assertEquals(1L, categoryIds.get(0));
+    }
 }
