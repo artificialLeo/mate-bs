@@ -1,51 +1,74 @@
 package com.book.store.repo;
 
 import com.book.store.config.CustomMySqlContainer;
+import com.book.store.config.TestDataInitializer;
 import com.book.store.model.Book;
+import com.book.store.model.Category;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
-@DataJpaTest
-//@SpringBootTest
-@RunWith(SpringRunner.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@SpringBootTest
-//@Transactional
+@SpringBootTest
+@Transactional
 public class BookRepositoryTests {
     @Autowired
     private BookRepository bookRepository;
 
-//    @Autowired
-//    private TestDataInitializer testDataInitializer;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    private static CustomMySqlContainer customMySqlContainer;
+    @Autowired
+    private TestDataInitializer testDataInitializer;
 
     @BeforeEach
     public void setUp() {
-        customMySqlContainer = CustomMySqlContainer.getInstance();
-        customMySqlContainer.start();
-//        testDataInitializer.initializeTestData();
+        testDataInitializer.initializeTestData();
     }
 
     @Test
     @DisplayName("Should find books by Category ID when category exists")
     public void findAllByCategoryId_CategoryExists_ReturnBooks() {
-        Long categoryId = 1L;
+        Category category = new Category();
+        category.setName("Test Category");
+        category.setDescription("Category Description");
+        categoryRepository.save(category);
+
+        Book book1 = new Book();
+        book1.setTitle("Book 1");
+        book1.setAuthor("Author 1");
+        book1.setIsbn("1234562390123");
+        book1.setPrice(BigDecimal.valueOf(29.99));
+        book1.setDescription("Description 1");
+        book1.setCoverImage("cover1.jpg");
+        book1.getCategories().add(category);
+        bookRepository.save(book1);
+
+        Book book2 = new Book();
+        book2.setTitle("Book 2");
+        book2.setAuthor("Author 2");
+        book2.setIsbn("9843543210987");
+        book2.setPrice(BigDecimal.valueOf(39.99));
+        book2.setDescription("Description 2");
+        book2.setCoverImage("cover2.jpg");
+        book2.getCategories().add(category);
+        bookRepository.save(book2);
+
+        Long categoryId = category.getId();
         Pageable pageable = Pageable.unpaged();
 
-        int actualSize = bookRepository.findAllByCategoryId(categoryId, pageable).stream().toList().size();
-        int expectedSize = 1;
+        List<Book> books = bookRepository.findAllByCategoryId(categoryId, pageable).stream().toList();
 
+        int expectedSize = 2;
+        int actualSize = books.size();
         Assertions.assertEquals(expectedSize, actualSize);
     }
 

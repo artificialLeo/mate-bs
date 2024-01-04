@@ -10,6 +10,8 @@ import com.book.store.repo.BookRepository;
 import com.book.store.repo.CartItemRepository;
 import com.book.store.repo.ShoppingCartRepository;
 import com.book.store.service.ShoppingCartService;
+
+import java.util.HashSet;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cartItem.setShoppingCart(shoppingCart);
             cartItem.setBook(book);
             cartItem.setQuantity(quantity);
+
+            if (shoppingCart.getCartItems() == null) {
+                shoppingCart.setCartItems(new HashSet<>());
+            }
+
             shoppingCart.getCartItems().add(cartItem);
         }
 

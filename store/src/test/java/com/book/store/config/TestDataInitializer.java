@@ -35,13 +35,8 @@ public class TestDataInitializer {
     private final RoleRepository roleRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final UserRepository userRepository;
-//    private static CustomMySqlContainer customMySqlContainer;
-
 
     public void initializeTestData() {
-//        customMySqlContainer = CustomMySqlContainer.getInstance();
-//        customMySqlContainer.start();
-
         createAndSaveTestBooks(5);
         createAndSaveTestUsers(5);
         User user = userRepository.findAll().get(0);
