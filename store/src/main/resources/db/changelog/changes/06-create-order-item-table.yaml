@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: create-order-table
+      id: create-order-item-table
       author: kh
       changes:
         - createTable:
-            tableName: orders
+            tableName: order_item
             columns:
               - column:
                   name: id
@@ -13,29 +13,22 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: user_id
+                  name: order_id
                   type: BIGINT
                   constraints:
-                    foreignKeyName: fk_user_id
-                    references: user(id)
+                    foreignKeyName: FK_order_item_order
+                    references: orders(id)
               - column:
-                  name: status
-                  type: VARCHAR(255)
+                  name: book_id
+                  type: BIGINT
+              - column:
+                  name: quantity
+                  type: INT
                   constraints:
                     nullable: false
               - column:
-                  name: total
+                  name: price
                   type: DECIMAL(19, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: order_date
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: shipping_address
-                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:

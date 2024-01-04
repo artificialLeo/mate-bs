@@ -2,45 +2,67 @@ package com.book.store.repo;
 
 import com.book.store.config.CustomMySqlContainer;
 import com.book.store.model.Book;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
+import java.util.Optional;
 
 @DataJpaTest
+//@SpringBootTest
+@RunWith(SpringRunner.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@SpringBootTest
+//@Transactional
 public class BookRepositoryTests {
-
     @Autowired
     private BookRepository bookRepository;
 
-    private CustomMySqlContainer customMySqlContainer;
+//    @Autowired
+//    private TestDataInitializer testDataInitializer;
 
-    @Before
+    private static CustomMySqlContainer customMySqlContainer;
+
+    @BeforeEach
     public void setUp() {
         customMySqlContainer = CustomMySqlContainer.getInstance();
         customMySqlContainer.start();
+//        testDataInitializer.initializeTestData();
     }
 
     @Test
-    @DisplayName("""
-            Get By Id
-            """ )
-    public void findById_idNotPresent_returnNothing() {
-        Book book = new Book();
-        book.setId(1L);
-        book.setTitle("book");
-        book.setPrice(BigDecimal.valueOf(49.95));
-        bookRepository.save(book);
+    @DisplayName("Should find books by Category ID when category exists")
+    public void findAllByCategoryId_CategoryExists_ReturnBooks() {
+        Long categoryId = 1L;
+        Pageable pageable = Pageable.unpaged();
 
-        Book result = bookRepository.findById(1L).orElseThrow();
+        int actualSize = bookRepository.findAllByCategoryId(categoryId, pageable).stream().toList().size();
+        int expectedSize = 1;
 
-        Assertions.assertEquals(1, result.getId());
+        Assertions.assertEquals(expectedSize, actualSize);
+    }
+
+    @Test
+    @DisplayName("Should find book by ID and is not deleted when book exists")
+    public void findByIdAndIsDeletedFalse_BookExists_ReturnBook() {
+        Book savedBook = bookRepository.findAll().get(0);
+        Optional<Book> foundBook = bookRepository.findByIdAndIsDeletedFalse(savedBook.getId());
+
+        Assertions.assertTrue(foundBook.isPresent());
+
+        long expectedId = savedBook.getId();
+        long actualId = foundBook.get().getId();
+        Assertions.assertEquals(expectedId, actualId);
+
+        long expectedSize = 5;
+        long actualSize = bookRepository.findAll().size();
+        Assertions.assertEquals(expectedSize, actualSize);
     }
 }
-

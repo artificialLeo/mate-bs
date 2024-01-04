@@ -19,7 +19,7 @@ import org.hibernate.annotations.Where;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE order_items SET is_deleted = true WHERE id=?;")
+@SQLDelete(sql = "UPDATE order_item SET is_deleted = true WHERE id=?;")
 @Where(clause = "is_deleted = false")
 public class OrderItem {
     @Column(nullable = false)
@@ -40,4 +40,7 @@ public class OrderItem {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
 }

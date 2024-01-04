@@ -24,5 +24,6 @@ public class Category {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
     private String description;
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE orders SET is_deleted = true WHERE id=?;")
 @Where(clause = "is_deleted = false")
+@Table(name = "orders")
 public class Order {
     @Column(nullable = false)
     @Id
@@ -52,4 +54,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItem> orderItems = new HashSet<>();
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
 }
