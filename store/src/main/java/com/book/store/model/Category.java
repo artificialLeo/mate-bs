@@ -23,7 +23,7 @@ public class Category {
     private String name;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private boolean isDeleted = Boolean.FALSE;
 
     private String description;
 }

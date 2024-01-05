@@ -42,5 +42,5 @@ public class OrderItem {
     private BigDecimal price;
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    private boolean isDeleted = Boolean.FALSE;
 }

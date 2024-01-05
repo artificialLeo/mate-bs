@@ -5,10 +5,15 @@ import com.book.store.dto.BookRequestDto;
 import com.book.store.exception.EntityNotFoundException;
 import com.book.store.mapper.BookMapper;
 import com.book.store.model.Book;
+import com.book.store.model.Category;
 import com.book.store.repo.BookRepository;
+import com.book.store.repo.CategoryRepository;
 import com.book.store.service.BookService;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
     private final BookMapper bookMapper;
 
     @Override
@@ -51,14 +57,20 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto updateBook(Long id, BookRequestDto updateBookDto) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(()
-                        -> new EntityNotFoundException("Book with id " + id + " not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Book with id " + id + " not found."));
 
-        bookMapper.toEntity(updateBookDto);
+        existingBook.setTitle(updateBookDto.getTitle());
+        existingBook.setAuthor(updateBookDto.getAuthor());
+        existingBook.setIsbn(updateBookDto.getIsbn());
+        existingBook.setPrice(updateBookDto.getPrice());
+        existingBook.setDescription(updateBookDto.getDescription());
+        existingBook.setCoverImage(updateBookDto.getCoverImage());
+
         Book updatedBook = bookRepository.save(existingBook);
 
         return bookMapper.toDto(updatedBook);
     }
+
 
     @Override
     public void deleteBook(Long id) {

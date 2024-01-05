@@ -26,7 +26,7 @@ import org.hibernate.annotations.Where;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE categories SET is_deleted = true WHERE id=?;")
+@SQLDelete(sql = "UPDATE book SET is_deleted = true WHERE id=?;")
 @Where(clause = "is_deleted = false")
 public class Book {
     @Id
@@ -55,7 +55,7 @@ public class Book {
     private String coverImage;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private boolean isDeleted = Boolean.FALSE;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

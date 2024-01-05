@@ -56,5 +56,5 @@ public class Order {
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    private boolean isDeleted = Boolean.FALSE;
 }
