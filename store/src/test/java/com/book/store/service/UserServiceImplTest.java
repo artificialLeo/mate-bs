@@ -1,5 +1,14 @@
 package com.book.store.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.book.store.dto.CreateUserRequestDto;
 import com.book.store.dto.CreateUserResponseDto;
 import com.book.store.exception.RegistrationException;
@@ -13,9 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
     @Mock
@@ -71,4 +77,3 @@ class UserServiceImplTest {
         verify(userMapper, never()).toCreateUserResponse(any());
     }
 }
-

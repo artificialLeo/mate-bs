@@ -1,5 +1,10 @@
 package com.book.store.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.book.store.dto.CartItemResponseDto;
 import com.book.store.dto.ShoppingCartResponseDto;
 import com.book.store.mapper.ShoppingCartMapper;
@@ -10,6 +15,7 @@ import com.book.store.repo.BookRepository;
 import com.book.store.repo.CartItemRepository;
 import com.book.store.repo.ShoppingCartRepository;
 import com.book.store.service.impl.ShoppingCartServiceImpl;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,12 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 class ShoppingCartServiceImplTests {
     @Mock

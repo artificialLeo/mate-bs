@@ -1,18 +1,17 @@
 package com.book.store.repo;
 
 import com.book.store.model.User;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @SpringBootTest
-@Transactional
 public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
@@ -32,6 +31,8 @@ public class UserRepositoryTests {
 
     @Test
     @DisplayName("existsByEmail -> Exists true")
+    @Transactional
+    @Rollback
     public void existsByEmail_ExistingEmail_ReturnTrue() {
         boolean exists = userRepository.existsByEmail("test@example.com");
 
@@ -40,6 +41,8 @@ public class UserRepositoryTests {
 
     @Test
     @DisplayName("existsByEmail -> Exists false")
+    @Transactional
+    @Rollback
     public void existsByEmail_NonExistingEmail_ReturnFalse() {
         boolean exists = userRepository.existsByEmail("nonexistent@example.com");
 
@@ -48,6 +51,8 @@ public class UserRepositoryTests {
 
     @Test
     @DisplayName("findByEmail -> Email")
+    @Transactional
+    @Rollback
     public void findByEmail_ExistingEmail_ReturnUser() {
         Optional<User> foundUser = userRepository.findByEmail("test@example.com");
         Assertions.assertTrue(foundUser.isPresent());
@@ -59,6 +64,8 @@ public class UserRepositoryTests {
     }
 
     @Test
+    @Transactional
+    @Rollback
     @DisplayName("findByEmail -> Empty true")
     public void findByEmail_NonExistingEmail_ReturnEmptyOptional() {
         Optional<User> foundUser = userRepository.findByEmail("nonexistent@example.com");

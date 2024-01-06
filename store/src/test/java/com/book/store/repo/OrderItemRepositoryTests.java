@@ -5,21 +5,20 @@ import com.book.store.model.Order;
 import com.book.store.model.OrderItem;
 import com.book.store.model.Status;
 import com.book.store.model.User;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Set;
-
 @SpringBootTest
-@Transactional
 public class OrderItemRepositoryTests {
     @Autowired
     private OrderItemRepository orderItemRepository;
@@ -73,6 +72,8 @@ public class OrderItemRepositoryTests {
 
     @Test
     @DisplayName("findAllByOrderId -> Set size")
+    @Transactional
+    @Rollback
     public void findAllByOrderId_PresentIdPassed_ReturnSetSize() {
         Set<OrderItem> orderItems = orderItemRepository.findAllByOrderId(order.getId());
 
@@ -83,6 +84,8 @@ public class OrderItemRepositoryTests {
 
     @Test
     @DisplayName("findAllByOrderId -> OrderItem Id")
+    @Transactional
+    @Rollback
     public void findAllByOrderId_PresentIdPassed_ReturnId() {
         Set<OrderItem> orderItems = orderItemRepository.findAllByOrderId(order.getId());
 
@@ -93,6 +96,8 @@ public class OrderItemRepositoryTests {
 
     @Test
     @DisplayName("findByIdAndOrderId -> OrderItem Id")
+    @Transactional
+    @Rollback
     public void findByIdAndOrderId_OrderItemPassed_ReturnOrderItem() {
         Optional<OrderItem> foundOrderItem = orderItemRepository.findByIdAndOrderId(orderItem.getId(), order.getId());
         Assertions.assertTrue(foundOrderItem.isPresent());
@@ -106,6 +111,8 @@ public class OrderItemRepositoryTests {
 
     @Test
     @DisplayName("findByIdAndOrderId -> Order Id")
+    @Transactional
+    @Rollback
     public void findByIdAndOrderId_OrderItemPassed_ReturnOrder() {
         Optional<OrderItem> foundOrderItem = orderItemRepository.findByIdAndOrderId(orderItem.getId(), order.getId());
         Assertions.assertTrue(foundOrderItem.isPresent());

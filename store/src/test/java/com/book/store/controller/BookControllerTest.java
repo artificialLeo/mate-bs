@@ -1,28 +1,5 @@
 package com.book.store.controller;
 
-import com.book.store.dto.BookDto;
-import com.book.store.model.Book;
-import com.book.store.model.Category;
-import com.book.store.repo.BookRepository;
-import com.book.store.repo.CategoryRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +9,29 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.book.store.dto.BookDto;
+import com.book.store.model.Book;
+import com.book.store.model.Category;
+import com.book.store.repo.BookRepository;
+import com.book.store.repo.CategoryRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -78,6 +78,7 @@ public class BookControllerTest {
     @Test
     @DisplayName("getBookById -> WhenBookSaved -> ReturnsCorrectDto")
     @Transactional
+    @Rollback
     public void getBookById_WhenBookSaved_ReturnsCorrectDto() throws Exception {
         Category category = createTestCategory();
         Book book1 = createTestBook("Book 1", "Author 1", "1234566690007", BigDecimal.valueOf(29.99), "Description 1", "cover1.jpg", category);
@@ -106,6 +107,7 @@ public class BookControllerTest {
     @Test
     @DisplayName("getAllBooks -> WhenBooksExist -> ReturnsPageOfBooks")
     @Transactional
+    @Rollback
     public void getAllBooks_WhenBooksExist_ReturnsPageOfBooks() throws Exception {
         mockMvc.perform(get("/api/books")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -116,6 +118,7 @@ public class BookControllerTest {
     @Test
     @DisplayName("createBook -> WhenValidInput -> BookCreated")
     @Transactional
+    @Rollback
     public void createBook_WhenValidInput_BookCreated() throws Exception {
         Category category = createTestCategory();
 
@@ -146,6 +149,7 @@ public class BookControllerTest {
     @Test
     @DisplayName("updateBook -> WhenValidInput -> BookUpdated")
     @Transactional
+    @Rollback
     public void updateBook_WhenValidInput_BookUpdated() throws Exception {
         Category category = createTestCategory();
         Book existingBook = createTestBook("Existing Book", "Existing Author", "1234567890004", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
@@ -178,6 +182,7 @@ public class BookControllerTest {
     @Test
     @DisplayName("deleteBook -> WhenBookExists -> BookDeleted")
     @Transactional
+    @Rollback
     public void deleteBook_WhenBookExists_BookDeleted() throws Exception {
         Category category = createTestCategory();
         Book bookToDelete = createTestBook("Existing Book", "Existing Author", "1234567890002", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
@@ -193,6 +198,7 @@ public class BookControllerTest {
     @Test
     @DisplayName("searchBooks -> WhenSearchCriteriaExist -> ReturnsMatchingBooks")
     @Transactional
+    @Rollback
     public void searchBooks_WhenSearchCriteriaExist_ReturnsMatchingBooks() throws Exception {
         Category category = createTestCategory();
         Book book = createTestBook("Search Book", "Existing Author", "1234567890001", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);

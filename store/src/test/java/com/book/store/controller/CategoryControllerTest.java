@@ -1,20 +1,33 @@
 package com.book.store.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.book.store.dto.CategoryDto;
-import com.book.store.mapper.BookMapper;
 import com.book.store.mapper.CategoryMapper;
 import com.book.store.model.Book;
 import com.book.store.model.Category;
 import com.book.store.repo.BookRepository;
 import com.book.store.repo.CategoryRepository;
-import com.book.store.service.BookService;
 import com.book.store.service.CategoryService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,25 +36,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -115,6 +115,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("createCategory -> SuccessfulCreation -> ReturnsCreatedCategoryDto")
     @Transactional
+    @Rollback
     void createCategory_SuccessfulCreation_ReturnsCreatedCategoryDto() throws Exception {
         CategoryDto categoryDto = new CategoryDto("Fiction", "Fictional Books");
         when(categoryService.save(any())).thenReturn(categoryDto);
@@ -132,6 +133,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("getAllCategories -> Successful -> ReturnsPageOfCategories")
     @Transactional
+    @Rollback
     void getAllCategories_Successful_ReturnsPageOfCategories() throws Exception {
         List<CategoryDto> categoryDtoList = categoryRepository.findAll()
                 .stream()
@@ -154,6 +156,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("getCategoryById -> Successful -> ReturnsCategoryDto")
     @Transactional
+    @Rollback
     void getCategoryById_Successful_ReturnsCategoryDto() throws Exception {
         when(categoryService.getById(1L)).thenReturn(categoryMapper.toDto(category));
 
@@ -169,6 +172,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("updateCategory -> SuccessfulUpdate -> ReturnsUpdatedCategoryDto")
     @Transactional
+    @Rollback
     void updateCategory_SuccessfulUpdate_ReturnsUpdatedCategoryDto() throws Exception {
         CategoryDto updatedCategoryDto = new CategoryDto("Fantasy", "Fantasy Books");
         when(categoryService.update(1L, updatedCategoryDto)).thenReturn(updatedCategoryDto);
@@ -187,6 +191,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("getBooksByCategoryId -> Successful -> ReturnsPageOfBooks")
     @Transactional
+    @Rollback
     void getBooksByCategoryId_Successful_ReturnsPageOfBooks() throws Exception {
         assertEquals(4, bookRepository.findAll().get(0).getId());
         assertEquals(5, categoryRepository.findAll().get(0).getId());
@@ -204,6 +209,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("deleteCategory -> SuccessfulDeletion -> ReturnsNoContent")
     @Transactional
+    @Rollback
     void deleteCategory_SuccessfulDeletion_ReturnsNoContent() throws Exception {
         categoryRepository.saveAndFlush(category);
         assertEquals(1, categoryRepository.findAll().stream().findFirst().orElseThrow().getId());
@@ -212,5 +218,4 @@ public class CategoryControllerTest {
         result.andExpect(status().isNoContent());
         assertTrue(categoryRepository.findById(1L).orElseThrow().isDeleted());
     }
-
 }

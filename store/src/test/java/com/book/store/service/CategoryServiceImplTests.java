@@ -1,11 +1,18 @@
 package com.book.store.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.book.store.dto.CategoryDto;
 import com.book.store.mapper.CategoryMapper;
 import com.book.store.model.Category;
-import com.book.store.repo.BookRepository;
 import com.book.store.repo.CategoryRepository;
 import com.book.store.service.impl.CategoryServiceImpl;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,12 +22,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 class CategoryServiceImplTests {
     @Mock
@@ -28,9 +29,6 @@ class CategoryServiceImplTests {
 
     @Mock
     private CategoryMapper categoryMapper;
-
-    @Mock
-    private BookRepository bookRepository;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -134,7 +132,7 @@ class CategoryServiceImplTests {
         CategoryRepository categoryRepository = mock(CategoryRepository.class);
         when(categoryRepository.findById(categoryId))
                 .thenReturn(Optional.of(new Category()));
-        CategoryService categoryService = new CategoryServiceImpl(categoryRepository, bookRepository, categoryMapper);
+        CategoryService categoryService = new CategoryServiceImpl(categoryRepository, categoryMapper);
         categoryService.deleteById(categoryId);
 
         verify(categoryRepository, times(1)).saveAndFlush(any());

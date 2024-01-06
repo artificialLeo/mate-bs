@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(config = MapperConfig.class)
 public interface ShoppingCartMapper {
-
     @Mapping(source = "cartItem.book.id", target = "bookId")
     @Mapping(source = "cartItem.book.title", target = "bookTitle")
     CartItemResponseDto mapToCartItemResponse(CartItem cartItem);

@@ -144,9 +144,7 @@
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>true</failsOnError>
 					<linkXRef>false</linkXRef>
-
-					<excludes>target/generated-sources/annotations/com/book/store/mapper/impl/CategoryMapperImpl.java</excludes>
-
+					<includes>src</includes>
 				</configuration>
 			</plugin>
 			<plugin>

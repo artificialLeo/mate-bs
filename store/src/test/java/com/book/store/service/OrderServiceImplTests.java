@@ -1,5 +1,10 @@
 package com.book.store.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.book.store.dto.OrderDto;
 import com.book.store.mapper.OrderMapper;
 import com.book.store.model.Order;
@@ -7,6 +12,9 @@ import com.book.store.model.Status;
 import com.book.store.repo.OrderRepository;
 import com.book.store.service.impl.OrderServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,13 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 class OrderServiceImplTests {
     @Mock

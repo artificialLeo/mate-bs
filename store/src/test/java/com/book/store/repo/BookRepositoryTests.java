@@ -3,6 +3,9 @@ package com.book.store.repo;
 import com.book.store.model.Book;
 import com.book.store.model.Category;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,13 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.test.annotation.Rollback;
 
 @SpringBootTest
-@Transactional
 public class BookRepositoryTests {
     @Autowired
     private BookRepository bookRepository;
@@ -58,6 +57,8 @@ public class BookRepositoryTests {
 
     @Test
     @DisplayName("findAllByCategoryId -> List size")
+    @Transactional
+    @Rollback
     public void findAllByCategoryId_CategoryExists_ReturnBooks() {
         Long categoryId = category.getId();
         Pageable pageable = Pageable.unpaged();
@@ -71,6 +72,8 @@ public class BookRepositoryTests {
 
     @Test
     @DisplayName("findByIdAndIsDeletedFalse -> Book Id")
+    @Transactional
+    @Rollback
     public void findByIdAndIsDeletedFalse_BookExists_ReturnBook() {
         Book savedBook = bookRepository.findAll().get(0);
         Optional<Book> foundBook = bookRepository.findByIdAndDeletedFalse(savedBook.getId());
@@ -84,6 +87,8 @@ public class BookRepositoryTests {
 
     @Test
     @DisplayName("findByIdAndIsDeletedFalse -> List size")
+    @Transactional
+    @Rollback
     public void findByIdAndIsDeletedFalse_BookExists_ReturnBooks() {
         Book savedBook = bookRepository.findAll().get(0);
         Optional<Book> foundBook = bookRepository.findByIdAndDeletedFalse(savedBook.getId());

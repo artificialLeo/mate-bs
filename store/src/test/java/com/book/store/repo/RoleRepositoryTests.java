@@ -8,10 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 public class RoleRepositoryTests {
     @Autowired
     private RoleRepository roleRepository;
@@ -27,6 +27,8 @@ public class RoleRepositoryTests {
 
     @Test
     @DisplayName("findByName -> RoleName")
+    @Transactional
+    @Rollback
     public void findByName_ExistingRoleName_ReturnRole() {
         RoleName expected = RoleName.ROLE_USER;
         RoleName actual = roleRepository.findByName(expected).getName();
