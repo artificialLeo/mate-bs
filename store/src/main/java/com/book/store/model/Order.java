@@ -26,8 +26,6 @@ import org.hibernate.annotations.Where;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE orders SET is_deleted = true WHERE id=?;")
-@Where(clause = "is_deleted = false")
 @Table(name = "orders")
 public class Order {
     @Column(nullable = false)
@@ -54,7 +52,4 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItem> orderItems = new HashSet<>();
-
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = Boolean.FALSE;
 }

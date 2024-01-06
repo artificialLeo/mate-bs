@@ -65,7 +65,7 @@ public class BookRepositoryTests {
         Long categoryId = category.getId();
         Pageable pageable = Pageable.unpaged();
 
-        List<Book> books = bookRepository.findAllByCategoryId(categoryId, pageable).stream().toList();
+        List<Book> books = bookRepository.findAllByCategoryIdAndNotDeleted(categoryId, pageable).stream().toList();
 
         int expectedSize = 2;
         int actualSize = books.size();
@@ -76,7 +76,7 @@ public class BookRepositoryTests {
     @DisplayName("Should find book by ID and is not deleted when book exists")
     public void findByIdAndIsDeletedFalse_BookExists_ReturnBook() {
         Book savedBook = bookRepository.findAll().get(0);
-        Optional<Book> foundBook = bookRepository.findByIdAndIsDeletedFalse(savedBook.getId());
+        Optional<Book> foundBook = bookRepository.findByIdAndDeletedFalse(savedBook.getId());
 
         Assertions.assertTrue(foundBook.isPresent());
 

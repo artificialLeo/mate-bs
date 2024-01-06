@@ -8,15 +8,18 @@ import com.book.store.model.Category;
 import java.util.List;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
+//    @Mapping(target = "categoryIds", ignore = true)
     BookDto toDto(Book book);
 
-    Book toEntity(BookRequestDto bookDto);
-
-    BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "categories", ignore = true)
+    Book toEntity(BookRequestDto bookRequestDto);
 
     @AfterMapping
     default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {

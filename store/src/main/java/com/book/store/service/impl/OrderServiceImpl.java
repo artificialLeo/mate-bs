@@ -1,13 +1,14 @@
 package com.book.store.service.impl;
 
 import com.book.store.dto.OrderDto;
-import com.book.store.exception.EntityNotFoundException;
 import com.book.store.mapper.OrderMapper;
 import com.book.store.model.Order;
 import com.book.store.model.Status;
 import com.book.store.repo.OrderRepository;
 import com.book.store.service.OrderService;
 import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

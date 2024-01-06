@@ -30,12 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AuthenticationControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @MockBean
     private UserService userService;
@@ -45,12 +41,6 @@ public class AuthenticationControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
-    @InjectMocks
-    private AuthenticationController authenticationController;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -90,5 +80,4 @@ public class AuthenticationControllerTest {
 
         result.andExpect(status().isAccepted());
     }
-
 }

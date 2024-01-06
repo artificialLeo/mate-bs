@@ -18,7 +18,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: is_deleted
+                  name: deleted
                   type: BOOLEAN
                   constraints:
                     nullable: false

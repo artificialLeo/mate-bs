@@ -1,10 +1,10 @@
 package com.book.store.service;
 
 import com.book.store.dto.OrderItemDto;
-import com.book.store.exception.EntityNotFoundException;
 import com.book.store.mapper.OrderItemMapper;
 import com.book.store.repo.OrderItemRepository;
 import com.book.store.service.impl.OrderItemServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

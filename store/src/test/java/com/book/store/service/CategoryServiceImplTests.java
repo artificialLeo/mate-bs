@@ -3,6 +3,7 @@ package com.book.store.service;
 import com.book.store.dto.CategoryDto;
 import com.book.store.mapper.CategoryMapper;
 import com.book.store.model.Category;
+import com.book.store.repo.BookRepository;
 import com.book.store.repo.CategoryRepository;
 import com.book.store.service.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,6 +29,10 @@ class CategoryServiceImplTests {
 
     @Mock
     private CategoryMapper categoryMapper;
+
+    @Mock
+    private BookRepository bookRepository;
+
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -127,8 +133,13 @@ class CategoryServiceImplTests {
     void deleteCategoryById() {
         Long categoryId = 1L;
 
+        CategoryRepository categoryRepository = mock(CategoryRepository.class);
+        when(categoryRepository.findById(categoryId))
+                .thenReturn(Optional.of(new Category()));
+        CategoryService categoryService = new CategoryServiceImpl(categoryRepository, bookRepository, categoryMapper);
         categoryService.deleteById(categoryId);
 
-        verify(categoryRepository, times(1)).deleteById(categoryId);
+        verify(categoryRepository, times(1)).saveAndFlush(any());
     }
+
 }

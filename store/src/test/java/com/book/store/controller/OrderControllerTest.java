@@ -2,16 +2,11 @@ package com.book.store.controller;
 
 import com.book.store.dto.OrderDto;
 import com.book.store.dto.OrderItemDto;
-import com.book.store.service.OrderService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.book.store.dto.OrderDto;
 import com.book.store.model.Status;
 import com.book.store.service.OrderService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,8 +28,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -60,18 +58,15 @@ public class OrderControllerTest {
 
     @Test
     void testPlaceOrder_ValidOrder_ReturnsCreatedStatus() throws Exception {
-        // Arrange
         OrderDto orderDto = createValidOrderDto();
-        OrderDto createdOrder = createValidOrderDto(); // Adjust as needed
+        OrderDto createdOrder = createValidOrderDto();
 
         when(orderService.placeOrder(any(OrderDto.class))).thenReturn(createdOrder);
 
-        // Act
         ResultActions result = mockMvc.perform(post("/api/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(orderDto)));
 
-        // Assert
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(createdOrder.getId()))
                 .andExpect(jsonPath("$.userId").value(createdOrder.getUserId()));
@@ -79,14 +74,11 @@ public class OrderControllerTest {
 
     @Test
     void testGetUserOrderHistory_ReturnsOrderHistory() throws Exception {
-        // Arrange
-        List<OrderDto> orderHistory = Arrays.asList(createValidOrderDto(), createValidOrderDto()); // Adjust as needed
+        List<OrderDto> orderHistory = Arrays.asList(createValidOrderDto(), createValidOrderDto());
         when(orderService.getUserOrderHistory()).thenReturn(orderHistory);
 
-        // Act
         ResultActions result = mockMvc.perform(get("/api/orders"));
 
-        // Assert
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(orderHistory.get(0).getId()))
                 .andExpect(jsonPath("$[1].id").value(orderHistory.get(1).getId()));
@@ -94,16 +86,13 @@ public class OrderControllerTest {
 
     @Test
     void testUpdateOrderStatus_ValidOrder_ReturnsNoContent() throws Exception {
-        // Arrange
         Long orderId = 1L;
-        OrderDto orderDto = createValidOrderDto(); // Adjust as needed
+        OrderDto orderDto = createValidOrderDto();
 
-        // Act
         ResultActions result = mockMvc.perform(patch("/api/orders/{id}", orderId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(orderDto)));
 
-        // Assert
         result.andExpect(status().isNoContent());
         verify(orderService).updateOrderStatus(eq(orderId), any(Status.class));
     }
@@ -130,4 +119,3 @@ public class OrderControllerTest {
         return orderDto;
     }
 }
-

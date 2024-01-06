@@ -30,12 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class OrderItemControllerTest {
-
     @MockBean
     private OrderItemService orderItemService;
-
-    @InjectMocks
-    private OrderItemController orderItemController;
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,11 +46,9 @@ class OrderItemControllerTest {
 
     @Test
     void testGetAllOrderItems_Successful() throws Exception {
-        // Arrange
         Set<OrderItemDto> orderItems = createOrderItems();
         when(orderItemService.getAllOrderItems(anyLong())).thenReturn(orderItems);
 
-        // Act
         mockMvc.perform(get("/api/orders/1/items")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -65,19 +59,15 @@ class OrderItemControllerTest {
 
     @Test
     void testGetOrderItem_Successful() throws Exception {
-        // Arrange
         OrderItemDto orderItem = createOrderItem();
         when(orderItemService.getOrderItem(anyLong(), anyLong())).thenReturn(orderItem);
 
-        // Act
         mockMvc.perform(get("/api/orders/1/items/2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(orderItem.getId()));
     }
-
-    // Helper methods to create sample data for testing
 
     private Set<OrderItemDto> createOrderItems() {
         Set<OrderItemDto> orderItems = new HashSet<>();
@@ -93,10 +83,5 @@ class OrderItemControllerTest {
         orderItem.setQuantity(3);
         orderItem.setPrice(new BigDecimal("25.99"));
         return orderItem;
-    }
-
-    // Setup method to initialize the MockMvc instance
-    private void setupMockMvc() {
-        mockMvc = MockMvcBuilders.standaloneSetup(orderItemController).build();
     }
 }

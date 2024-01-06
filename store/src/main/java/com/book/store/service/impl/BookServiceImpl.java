@@ -2,7 +2,6 @@ package com.book.store.service.impl;
 
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
-import com.book.store.exception.EntityNotFoundException;
 import com.book.store.mapper.BookMapper;
 import com.book.store.model.Book;
 import com.book.store.model.Category;
@@ -11,9 +10,8 @@ import com.book.store.repo.CategoryRepository;
 import com.book.store.service.BookService;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
-    private final CategoryRepository categoryRepository;
     private final BookMapper bookMapper;
 
     @Override
@@ -66,15 +63,34 @@ public class BookServiceImpl implements BookService {
         existingBook.setDescription(updateBookDto.getDescription());
         existingBook.setCoverImage(updateBookDto.getCoverImage());
 
+
         Book updatedBook = bookRepository.save(existingBook);
+
+//        BookDto bookDto = new BookDto();
+//        bookDto.setId(updatedBook.getId());
+//        bookDto.setAuthor(updatedBook.getAuthor());
+//        bookDto.setCategoryIds(updatedBook.getCategories()
+//                .stream()
+//                .map(Category::getId)
+//                .toList());
+//        bookDto.setDescription(updatedBook.getDescription());
+//        bookDto.setPrice(updatedBook.getPrice());
+//        bookDto.setIsbn(updatedBook.getIsbn());
+//        bookDto.setTitle(updatedBook.getTitle());
+//        bookDto.setCoverImage(updatedBook.getCoverImage());
+//
+//        return bookDto;
 
         return bookMapper.toDto(updatedBook);
     }
 
-
     @Override
     public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+        Book bookToDelete = bookRepository.findById(id)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Book with id " + id + " not found."));
+        bookToDelete.setDeleted(true);
+        bookRepository.saveAndFlush(bookToDelete);
     }
 
     @Override
@@ -96,7 +112,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Page<BookDto> findAllByCategoryId(Long categoryId, Pageable pageable) {
-        Page<Book> booksPage = bookRepository.findAllByCategoryId(categoryId, pageable);
+        Page<Book> booksPage = bookRepository.findAllByCategoryIdAndNotDeleted(categoryId, pageable);
         return booksPage.map(bookMapper::toDto);
     }
 }

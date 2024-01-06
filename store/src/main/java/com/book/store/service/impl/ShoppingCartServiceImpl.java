@@ -13,6 +13,8 @@ import com.book.store.service.ShoppingCartService;
 
 import java.util.HashSet;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +65,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cartItemRepository.save(cartItem);
         });
 
-        return shoppingCartMapper.mapToCartItemResponse(optionalCartItem.orElseThrow());
+        return shoppingCartMapper.mapToCartItemResponse(
+                optionalCartItem
+                        .orElseThrow(
+                                () -> new EntityNotFoundException("CartItem with id " + cartItemId + " not found.")));
     }
 
     @Override

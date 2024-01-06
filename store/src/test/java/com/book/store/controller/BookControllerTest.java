@@ -1,22 +1,18 @@
 package com.book.store.controller;
 
-import com.book.store.config.TestDataInitializer;
 import com.book.store.dto.BookDto;
 import com.book.store.model.Book;
 import com.book.store.model.Category;
 import com.book.store.repo.BookRepository;
 import com.book.store.repo.CategoryRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -37,11 +32,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class BookControllerIntegrationTest {
-    @LocalServerPort
-    private int port;
-
+@SpringBootTest
+@AutoConfigureMockMvc
+public class BookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
@@ -54,6 +47,7 @@ public class BookControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -61,32 +55,40 @@ public class BookControllerIntegrationTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
-    @Test
-    public void getBookByIdUsingMockMvc_WhenBookSaved_DtoIsCorrect() throws Exception {
+    private Category createTestCategory() {
         Category category = new Category();
         category.setName("Test Category");
         category.setDescription("Category Description");
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
+    }
 
-        Book book1 = new Book();
-        book1.setTitle("Book 1");
-        book1.setAuthor("Author 1");
-        book1.setIsbn("1234566690007");
-        book1.setPrice(BigDecimal.valueOf(29.99));
-        book1.setDescription("Description 1");
-        book1.setCoverImage("cover1.jpg");
-        book1.getCategories().add(category);
-        bookRepository.save(book1);
+    private Book createTestBook(String title, String author, String isbn, BigDecimal price, String description, String coverImage, Category category) {
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setIsbn(isbn);
+        book.setPrice(price);
+        book.setDescription(description);
+        book.setCoverImage(coverImage);
+        book.getCategories().add(category);
+        return bookRepository.save(book);
+    }
+
+    @Test
+    @Transactional
+    public void getBookByIdUsingMockMvc_WhenBookSaved_DtoIsCorrect() throws Exception {
+        Category category = createTestCategory();
+        Book book1 = createTestBook("Book 1", "Author 1", "1234566690007", BigDecimal.valueOf(29.99), "Description 1", "cover1.jpg", category);
 
         String responseContent = mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/books/1")
+                        .get("/api/books/{id}", book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         BookDto bookDto = objectMapper.readValue(responseContent, BookDto.class);
 
-        assertEquals(1L, bookDto.getId());
+        assertEquals(book1.getId(), bookDto.getId());
         assertEquals("Book 1", bookDto.getTitle());
         assertEquals("Author 1", bookDto.getAuthor());
         assertEquals("1234566690007", bookDto.getIsbn());
@@ -96,26 +98,22 @@ public class BookControllerIntegrationTest {
 
         List<Long> categoryIds = bookDto.getCategoryIds();
         assertNotNull(categoryIds);
-        assertFalse(categoryIds.isEmpty());
-        assertEquals(1L, categoryIds.get(0));
+        assertTrue(categoryIds.contains(category.getId()));
     }
 
     @Test
+    @Transactional
     public void getAllBooksUsingMockMvc_WhenBooksExist_ReturnsPageOfBooks() throws Exception {
         mockMvc.perform(get("/api/books")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content").isEmpty());
+                .andExpect(jsonPath("$.content").isArray());
     }
 
-
     @Test
+    @Transactional
     public void createBookUsingMockMvc_WhenValidInput_BookCreated() throws Exception {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("Category Description");
-        categoryRepository.save(category);
+        Category category = createTestCategory();
 
         BookDto bookDto = new BookDto();
         bookDto.setTitle("New Book");
@@ -142,21 +140,10 @@ public class BookControllerIntegrationTest {
     }
 
     @Test
+    @Transactional
     public void updateBookUsingMockMvc_WhenValidInput_BookUpdated() throws Exception {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("Category Description");
-        categoryRepository.save(category);
-
-        Book existingBook = new Book();
-        existingBook.setTitle("Existing Book");
-        existingBook.setAuthor("Existing Author");
-        existingBook.setIsbn("1234567890004");
-        existingBook.setPrice(BigDecimal.valueOf(29.99));
-        existingBook.setDescription("Existing Description");
-        existingBook.setCoverImage("existing_cover.jpg");
-        existingBook.getCategories().add(category);
-        bookRepository.save(existingBook);
+        Category category = createTestCategory();
+        Book existingBook = createTestBook("Existing Book", "Existing Author", "1234567890004", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
 
         BookDto updatedBookDto = new BookDto();
         updatedBookDto.setTitle("Updated Book");
@@ -184,22 +171,10 @@ public class BookControllerIntegrationTest {
     }
 
     @Test
+    @Transactional
     public void deleteBookUsingMockMvc_WhenBookExists_BookDeleted() throws Exception {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("Category Description");
-        categoryRepository.save(category);
-
-        Book bookToDelete = new Book();
-        bookToDelete.setTitle("Existing Book");
-        bookToDelete.setAuthor("Existing Author");
-        bookToDelete.setIsbn("1234567890002");
-        bookToDelete.setPrice(BigDecimal.valueOf(29.99));
-        bookToDelete.setDescription("Existing Description");
-        bookToDelete.setCoverImage("existing_cover.jpg");
-        bookToDelete.getCategories().add(category);
-        bookToDelete.setDeleted(false);
-        bookRepository.save(bookToDelete);
+        Category category = createTestCategory();
+        Book bookToDelete = createTestBook("Existing Book", "Existing Author", "1234567890002", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
 
         mockMvc.perform(delete("/api/books/{id}", bookToDelete.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -210,32 +185,21 @@ public class BookControllerIntegrationTest {
     }
 
     @Test
+    @Transactional
     public void searchBooksUsingMockMvc_WhenSearchCriteriaExist_ReturnsMatchingBooks() throws Exception {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("Category Description");
-        categoryRepository.save(category);
-
-        Book book = new Book();
-        book.setTitle("Search Book");
-        book.setAuthor("Existing Author");
-        book.setIsbn("1234567890001");
-        book.setPrice(BigDecimal.valueOf(29.99));
-        book.setDescription("Existing Description");
-        book.setCoverImage("existing_cover.jpg");
-        book.getCategories().add(category);
-        bookRepository.save(book);
+        Category category = createTestCategory();
+        Book book = createTestBook("Search Book", "Existing Author", "1234567890001", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
 
         String responseContent = mockMvc.perform(get("/api/books/search")
-                        .param("title","Search Book")
+                        .param("title", "Search Book")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        List<BookDto> searchResult = objectMapper.readValue(responseContent, new TypeReference<>() {});
+        List<BookDto> searchResult = objectMapper.readValue(responseContent, new TypeReference<>() {
+        });
 
         assertNotNull(searchResult);
         assertEquals("Search Book", searchResult.get(0).getTitle());
     }
-
 }

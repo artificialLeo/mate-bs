@@ -2,11 +2,12 @@ package com.book.store.service;
 
 import com.book.store.dto.BookDto;
 import com.book.store.dto.BookRequestDto;
-import com.book.store.exception.EntityNotFoundException;
 import com.book.store.mapper.BookMapper;
 import com.book.store.model.Book;
+import com.book.store.model.Category;
 import com.book.store.repo.BookRepository;
 import com.book.store.service.impl.BookServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -114,20 +116,46 @@ public class BookServiceImplTests {
     void updateBook() {
         Long bookId = 1L;
         BookRequestDto updateBookDto = new BookRequestDto();
+        updateBookDto.setTitle("Updated Title");
+        updateBookDto.setAuthor("Updated Author");
+        updateBookDto.setIsbn("Updated ISBN");
+        updateBookDto.setPrice(BigDecimal.valueOf(29.99));
+        updateBookDto.setDescription("Updated Description");
+        updateBookDto.setCoverImage("Updated Cover Image");
+
         Book existingBook = new Book();
-        Book updatedBook = new Book();
+        existingBook.setId(1L);
+        existingBook.setTitle("Existing Book Title");
+        existingBook.setAuthor("Existing Book Author");
+        existingBook.setIsbn("1234567890123");
+        existingBook.setPrice(BigDecimal.valueOf(19.99));
+        existingBook.setDescription("Existing Book Description");
+        existingBook.setCoverImage("existing-book-cover.jpg");
+        existingBook.setDeleted(false);
+
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
-        when(bookMapper.toEntity(updateBookDto)).thenReturn(updatedBook);
-        when(bookRepository.save(existingBook)).thenReturn(updatedBook);
-        when(bookMapper.toDto(updatedBook)).thenReturn(new BookDto());
+
+        when(bookRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(bookMapper.toDto(any())).thenAnswer(invocation -> {
+            Book bookArgument = invocation.getArgument(0);
+            BookDto bookDto = new BookDto();
+            bookDto.setId(bookArgument.getId());
+            bookDto.setTitle(bookArgument.getTitle());
+            bookDto.setAuthor(bookArgument.getAuthor());
+
+            return bookDto;
+        });
 
         BookDto result = bookService.updateBook(bookId, updateBookDto);
 
-        Assertions.assertNotNull(result);
         verify(bookRepository, times(1)).findById(bookId);
-        verify(bookMapper, times(1)).toEntity(updateBookDto);
-        verify(bookRepository, times(1)).save(existingBook);
-        verify(bookMapper, times(1)).toDto(updatedBook);
+        verify(bookRepository, times(1)).save(any());
+        verify(bookMapper, times(1)).toDto(any());
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(updateBookDto.getTitle(), result.getTitle());
+        Assertions.assertEquals(updateBookDto.getAuthor(), result.getAuthor());
     }
 
     @Test
@@ -145,10 +173,17 @@ public class BookServiceImplTests {
     void deleteBook() {
         Long bookId = 1L;
 
+        BookRepository bookRepository = mock(BookRepository.class);
+        when(bookRepository.findById(bookId))
+                .thenReturn(Optional.of(new Book()));
+        BookService bookService = new BookServiceImpl(bookRepository, bookMapper);
         bookService.deleteBook(bookId);
 
-        verify(bookRepository, times(1)).deleteById(bookId);
+        verify(bookRepository, times(1)).saveAndFlush(any());
     }
+
+
+
 
     @Test
     @DisplayName("Should search for books")
@@ -171,13 +206,13 @@ public class BookServiceImplTests {
         Long categoryId = 1L;
         Pageable pageable = Pageable.unpaged();
         Page<Book> booksPage = Page.empty();
-        when(bookRepository.findAllByCategoryId(categoryId, pageable)).thenReturn(booksPage);
+        when(bookRepository.findAllByCategoryIdAndNotDeleted(categoryId, pageable)).thenReturn(booksPage);
         when(bookMapper.toDto(any())).thenReturn(new BookDto());
 
         Page<BookDto> result = bookService.findAllByCategoryId(categoryId, pageable);
 
         Assertions.assertNotNull(result);
-        verify(bookRepository, times(1)).findAllByCategoryId(categoryId, pageable);
+        verify(bookRepository, times(1)).findAllByCategoryIdAndNotDeleted(categoryId, pageable);
         verify(bookMapper, times(0)).toDto(any());
     }
 }

@@ -52,14 +52,11 @@ class ShoppingCartControllerTest {
 
     @Test
     void getUserShoppingCart() throws Exception {
-        // Mock the service response
         ShoppingCartResponseDto mockShoppingCart = new ShoppingCartResponseDto();
         when(shoppingCartService.getUserShoppingCart(anyLong())).thenReturn(mockShoppingCart);
 
-        // Perform the request
         ResultActions result = mockMvc.perform(get("/api/cart?userId=1"));
 
-        // Verify the response
         result.andExpect(status().isAccepted())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(mockShoppingCart)));
@@ -67,22 +64,18 @@ class ShoppingCartControllerTest {
 
     @Test
     void addBookToCart() throws Exception {
-        // Mock the service response
         ShoppingCartResponseDto mockShoppingCart = new ShoppingCartResponseDto();
         when(shoppingCartService.addBookToCart(anyLong(), anyLong(), anyInt())).thenReturn(mockShoppingCart);
 
-        // Prepare the request
         ShoppingCartRequestDto requestDto = new ShoppingCartRequestDto();
         requestDto.setBookId(1L);
         requestDto.setQuantity(2);
 
-        // Perform the request
         ResultActions result = mockMvc.perform(post("/api/cart?userId=1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)));
 
 
-        // Verify the response
         result.andExpect(status().isAccepted())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(mockShoppingCart)));
@@ -91,20 +84,16 @@ class ShoppingCartControllerTest {
 
     @Test
     void updateCartItemQuantity() throws Exception {
-        // Mock the service response
         CartItemResponseDto mockCartItem = new CartItemResponseDto();
         when(shoppingCartService.updateCartItemQuantity(anyLong(), anyInt())).thenReturn(mockCartItem);
 
-        // Prepare the request
         UpdateQuantityRequestDto requestDto = new UpdateQuantityRequestDto();
         requestDto.setQuantity(3);
 
-        // Perform the request
         ResultActions result = mockMvc.perform(put("/api/cart/cart-items/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)));
 
-        // Verify the response
         result.andExpect(status().isAccepted())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(mockCartItem)));
@@ -112,13 +101,10 @@ class ShoppingCartControllerTest {
 
     @Test
     void removeBookFromCart() throws Exception {
-        // Mock the service response
         doNothing().when(shoppingCartService).removeBookFromCart(anyLong());
 
-        // Perform the request
         ResultActions result = mockMvc.perform(delete("/api/cart/cart-items/1"));
 
-        // Verify the response
         result.andExpect(status().isAccepted());
     }
 }
