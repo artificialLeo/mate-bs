@@ -11,8 +11,14 @@ import org.springframework.data.repository.query.Param;
 
 public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book> {
 
-    @Query("SELECT b FROM Book b JOIN b.categories c WHERE c.id = :categoryId AND b.deleted = false")
-    Page<Book> findAllByCategoryIdAndNotDeleted(@Param("categoryId") Long categoryId, Pageable pageable);
+    @Query(
+            "SELECT b FROM Book b JOIN b.categories c WHERE c.id "
+                    + "= :categoryId AND b.deleted = false"
+    )
+    Page<Book> findAllByCategoryIdAndNotDeleted(
+            @Param("categoryId") Long categoryId,
+            Pageable pageable
+    );
 
     Optional<Book> findByIdAndDeletedFalse(Long id);
 }

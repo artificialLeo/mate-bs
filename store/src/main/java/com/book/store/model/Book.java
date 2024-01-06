@@ -58,7 +58,10 @@ public class Book {
     @Column(name = "deleted")
     private boolean deleted = Boolean.FALSE;
 
-    @ManyToMany(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
+    @ManyToMany(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
     @JoinTable(
             name = "book_categories",
             joinColumns = @JoinColumn(name = "book_id"),

@@ -1,11 +1,12 @@
 package com.book.store.mapper;
 
 import com.book.store.dto.BookDto;
-import com.book.store.dto.BookDtoWithoutCategoryIds;
 import com.book.store.dto.BookRequestDto;
 import com.book.store.model.Book;
 import com.book.store.model.Category;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,7 +14,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
-//    @Mapping(target = "categoryIds", ignore = true)
+    @Mapping(source = "categories", target = "categoryIds")
     BookDto toDto(Book book);
 
     @Mapping(target = "id", ignore = true)
@@ -31,5 +32,11 @@ public interface BookMapper {
 
             bookDto.setCategoryIds(categoryIds);
         }
+    }
+
+    default List<Long> map(Set<Category> categories) {
+        return categories.stream()
+                .map(Category::getId)
+                .collect(Collectors.toList());
     }
 }

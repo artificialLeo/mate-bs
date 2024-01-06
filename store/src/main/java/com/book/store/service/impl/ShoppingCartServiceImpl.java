@@ -10,11 +10,9 @@ import com.book.store.repo.BookRepository;
 import com.book.store.repo.CartItemRepository;
 import com.book.store.repo.ShoppingCartRepository;
 import com.book.store.service.ShoppingCartService;
-
+import jakarta.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.Optional;
-
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +66,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.mapToCartItemResponse(
                 optionalCartItem
                         .orElseThrow(
-                                () -> new EntityNotFoundException("CartItem with id " + cartItemId + " not found.")));
+                                () -> new EntityNotFoundException("CartItem with id "
+                                        + cartItemId + " not found.")));
     }
 
     @Override
