@@ -41,7 +41,7 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Get all categories with pagination and sorting")
-    public ResponseEntity<Page<CategoryDto>> getAll(
+    public ResponseEntity<Page<CategoryDto>> getAllCategories(
             @PageableDefault(
                     page = 0,
                     size = 10,

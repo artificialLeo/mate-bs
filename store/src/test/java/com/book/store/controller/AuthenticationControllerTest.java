@@ -9,6 +9,7 @@ import com.book.store.secutiry.AuthenticationService;
 import com.book.store.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,8 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    void testRegisterUser_SuccessfulRegistration() throws Exception {
+    @DisplayName("register -> Success")
+    void register_ValidData_SuccessfulRegistration() throws Exception {
         CreateUserRequestDto createUserRequestDto = new CreateUserRequestDto(
                 "test@example.com",
                 "password",
@@ -60,7 +62,12 @@ public class AuthenticationControllerTest {
                 "Doe",
                 "123 Main St"
         );
-        when(userService.registerUser(any())).thenReturn(new CreateUserResponseDto(1L, "test@example.com", "John", "Doe", "123 Main St"));
+        when(userService.registerUser(any())).thenReturn(new CreateUserResponseDto(
+                1L,
+                "test@example.com",
+                "John",
+                "Doe",
+                "123 Main St"));
 
         ResultActions result = mockMvc.perform(post("/api/auth/registration")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +77,8 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    void testLogin_SuccessfulLogin() throws Exception {
+    @DisplayName("login -> Success")
+    void login_ValidData_SuccessfulLogin() throws Exception {
         UserLoginRequestDto userLoginRequestDto = new UserLoginRequestDto("test@example.com", "password");
         when(authenticationService.authenticate(any())).thenReturn(new UserLoginResponseDto("dummyToken"));
 

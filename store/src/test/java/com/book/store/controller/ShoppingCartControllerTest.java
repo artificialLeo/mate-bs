@@ -7,6 +7,7 @@ import com.book.store.dto.UpdateQuantityRequestDto;
 import com.book.store.service.ShoppingCartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -32,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class ShoppingCartControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -51,7 +51,8 @@ class ShoppingCartControllerTest {
     }
 
     @Test
-    void getUserShoppingCart() throws Exception {
+    @DisplayName("getUserShoppingCart -> Successful -> ReturnsAccepted")
+    void getUserShoppingCart_ValidUserId_Successful() throws Exception {
         ShoppingCartResponseDto mockShoppingCart = new ShoppingCartResponseDto();
         when(shoppingCartService.getUserShoppingCart(anyLong())).thenReturn(mockShoppingCart);
 
@@ -63,7 +64,8 @@ class ShoppingCartControllerTest {
     }
 
     @Test
-    void addBookToCart() throws Exception {
+    @DisplayName("addBookToCart -> Successful -> ReturnsAccepted")
+    void addBookToCart_ValidShoppingCartRequestDtoAndUserId_Successful() throws Exception {
         ShoppingCartResponseDto mockShoppingCart = new ShoppingCartResponseDto();
         when(shoppingCartService.addBookToCart(anyLong(), anyLong(), anyInt())).thenReturn(mockShoppingCart);
 
@@ -75,15 +77,14 @@ class ShoppingCartControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)));
 
-
         result.andExpect(status().isAccepted())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(mockShoppingCart)));
-
     }
 
     @Test
-    void updateCartItemQuantity() throws Exception {
+    @DisplayName("updateCartItemQuantity -> Successful -> ReturnsAccepted")
+    void updateCartItemQuantity_ValidCartItemId_Successful() throws Exception {
         CartItemResponseDto mockCartItem = new CartItemResponseDto();
         when(shoppingCartService.updateCartItemQuantity(anyLong(), anyInt())).thenReturn(mockCartItem);
 
@@ -100,7 +101,8 @@ class ShoppingCartControllerTest {
     }
 
     @Test
-    void removeBookFromCart() throws Exception {
+    @DisplayName("removeBookFromCart -> Successful -> ReturnsAccepted")
+    void removeBookFromCart_ValidCartItemId_Successful() throws Exception {
         doNothing().when(shoppingCartService).removeBookFromCart(anyLong());
 
         ResultActions result = mockMvc.perform(delete("/api/cart/cart-items/1"));

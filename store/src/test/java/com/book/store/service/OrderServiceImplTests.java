@@ -38,8 +38,8 @@ class OrderServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should place an order")
-    void placeOrder() {
+    @DisplayName("placeOrder -> Place Order -> Returns OrderDto")
+    void placeOrder_PlaceOrder_ReturnsOrderDto() {
         OrderDto orderDto = new OrderDto();
         Order order = new Order();
         when(orderMapper.mapToOrderEntity(orderDto)).thenReturn(order);
@@ -55,8 +55,8 @@ class OrderServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get user order history")
-    void getUserOrderHistory() {
+    @DisplayName("getUserOrderHistory -> Get User Order History -> Returns List of OrderDto")
+    void getUserOrderHistory_GetUserOrderHistory_ReturnsListOfOrderDto() {
         when(orderRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<OrderDto> result = orderService.getUserOrderHistory();
@@ -67,8 +67,8 @@ class OrderServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should update order status")
-    void updateOrderStatus() {
+    @DisplayName("updateOrderStatus -> Update Order Status -> No Return Value")
+    void updateOrderStatus_UpdateOrderStatus_NoReturnValue() {
         Long orderId = 1L;
         Status newStatus = Status.PENDING;
         Order order = new Order();
@@ -82,8 +82,8 @@ class OrderServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should throw EntityNotFoundException when updating status for a non-existing order")
-    void updateOrderStatusNonExistingOrder() {
+    @DisplayName("updateOrderStatus -> Throws EntityNotFoundException for Non-Existing Order")
+    void updateOrderStatus_NonExistingOrder_ThrowsEntityNotFoundException() {
         Long nonExistingOrderId = 999L;
         Status newStatus = Status.PENDING;
         when(orderRepository.findById(nonExistingOrderId)).thenReturn(Optional.empty());

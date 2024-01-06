@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -75,8 +76,9 @@ public class BookControllerTest {
     }
 
     @Test
+    @DisplayName("getBookById -> WhenBookSaved -> ReturnsCorrectDto")
     @Transactional
-    public void getBookByIdUsingMockMvc_WhenBookSaved_DtoIsCorrect() throws Exception {
+    public void getBookById_WhenBookSaved_ReturnsCorrectDto() throws Exception {
         Category category = createTestCategory();
         Book book1 = createTestBook("Book 1", "Author 1", "1234566690007", BigDecimal.valueOf(29.99), "Description 1", "cover1.jpg", category);
 
@@ -102,8 +104,9 @@ public class BookControllerTest {
     }
 
     @Test
+    @DisplayName("getAllBooks -> WhenBooksExist -> ReturnsPageOfBooks")
     @Transactional
-    public void getAllBooksUsingMockMvc_WhenBooksExist_ReturnsPageOfBooks() throws Exception {
+    public void getAllBooks_WhenBooksExist_ReturnsPageOfBooks() throws Exception {
         mockMvc.perform(get("/api/books")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -111,8 +114,9 @@ public class BookControllerTest {
     }
 
     @Test
+    @DisplayName("createBook -> WhenValidInput -> BookCreated")
     @Transactional
-    public void createBookUsingMockMvc_WhenValidInput_BookCreated() throws Exception {
+    public void createBook_WhenValidInput_BookCreated() throws Exception {
         Category category = createTestCategory();
 
         BookDto bookDto = new BookDto();
@@ -140,8 +144,9 @@ public class BookControllerTest {
     }
 
     @Test
+    @DisplayName("updateBook -> WhenValidInput -> BookUpdated")
     @Transactional
-    public void updateBookUsingMockMvc_WhenValidInput_BookUpdated() throws Exception {
+    public void updateBook_WhenValidInput_BookUpdated() throws Exception {
         Category category = createTestCategory();
         Book existingBook = createTestBook("Existing Book", "Existing Author", "1234567890004", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
 
@@ -171,8 +176,9 @@ public class BookControllerTest {
     }
 
     @Test
+    @DisplayName("deleteBook -> WhenBookExists -> BookDeleted")
     @Transactional
-    public void deleteBookUsingMockMvc_WhenBookExists_BookDeleted() throws Exception {
+    public void deleteBook_WhenBookExists_BookDeleted() throws Exception {
         Category category = createTestCategory();
         Book bookToDelete = createTestBook("Existing Book", "Existing Author", "1234567890002", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
 
@@ -185,8 +191,9 @@ public class BookControllerTest {
     }
 
     @Test
+    @DisplayName("searchBooks -> WhenSearchCriteriaExist -> ReturnsMatchingBooks")
     @Transactional
-    public void searchBooksUsingMockMvc_WhenSearchCriteriaExist_ReturnsMatchingBooks() throws Exception {
+    public void searchBooks_WhenSearchCriteriaExist_ReturnsMatchingBooks() throws Exception {
         Category category = createTestCategory();
         Book book = createTestBook("Search Book", "Existing Author", "1234567890001", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
 
@@ -196,8 +203,7 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        List<BookDto> searchResult = objectMapper.readValue(responseContent, new TypeReference<>() {
-        });
+        List<BookDto> searchResult = objectMapper.readValue(responseContent, new TypeReference<>() {});
 
         assertNotNull(searchResult);
         assertEquals("Search Book", searchResult.get(0).getTitle());

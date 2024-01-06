@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
-
     @Mock
     private UserRepository userRepository;
 
@@ -34,8 +33,8 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should register a new user")
-    void registerUser_Success() throws RegistrationException {
+    @DisplayName("registerUser -> Success")
+    void registerUser_ValidData_Success() throws RegistrationException {
         CreateUserRequestDto request = new CreateUserRequestDto();
         request.setEmail("test@example.com");
         User user = new User();
@@ -58,7 +57,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw RegistrationException when email is already in use")
+    @DisplayName("registerUser -> Email In Use -> Throw RegistrationException")
     void registerUser_EmailInUse_ThrowRegistrationException() {
         CreateUserRequestDto request = new CreateUserRequestDto();
         request.setEmail("test@example.com");

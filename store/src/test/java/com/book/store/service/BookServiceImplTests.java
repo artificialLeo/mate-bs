@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class BookServiceImplTests {
-
     @Mock
     private BookRepository bookRepository;
 
@@ -45,8 +44,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should save a book")
-    void saveBook() {
+    @DisplayName("saveBook -> Save a Book -> Returns Saved Book")
+    void saveBook_SaveBook_ReturnsSavedBook() {
         Book book = new Book();
         when(bookRepository.save(any())).thenReturn(book);
 
@@ -57,8 +56,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get all books")
-    void getAllBooks() {
+    @DisplayName("getAllBooks -> No Books Found -> Returns Empty List")
+    void getAllBooks_NoBooksFound_ReturnsEmptyList() {
         Pageable pageable = Pageable.unpaged();
         List<Book> books = new ArrayList<>();
         when(bookRepository.findAll(pageable)).thenReturn(Page.empty());
@@ -72,8 +71,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get a book by ID")
-    void getBookById() {
+    @DisplayName("getBookById -> Existing Book ID -> Returns BookDto")
+    void getBookById_ExistingBookId_ReturnsBookDto() {
         Long bookId = 1L;
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(new Book()));
         when(bookMapper.toDto(any())).thenReturn(new BookDto());
@@ -86,8 +85,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should throw EntityNotFoundException when getting a non-existing book by ID")
-    void getNonExistingBookById() {
+    @DisplayName("getBookById -> Non-Existing Book ID -> Throws EntityNotFoundException")
+    void getBookById_NonExistingBookId_ThrowsEntityNotFoundException() {
         Long nonExistingBookId = 999L;
         when(bookRepository.findById(nonExistingBookId)).thenReturn(Optional.empty());
 
@@ -95,8 +94,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should create a new book")
-    void createBook() {
+    @DisplayName("createBook -> New BookDto -> Saved BookDto")
+    void createBook_NewBookDto_SavedBookDto() {
         BookRequestDto bookDto = new BookRequestDto();
         Book book = new Book();
         when(bookMapper.toEntity(bookDto)).thenReturn(book);
@@ -112,31 +111,14 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should update an existing book")
-    void updateBook() {
+    @DisplayName("updateBook -> Existing Book -> Updated BookDto")
+    void updateBook_ExistingBook_UpdatedBookDto() {
         Long bookId = 1L;
         BookRequestDto updateBookDto = new BookRequestDto();
-        updateBookDto.setTitle("Updated Title");
-        updateBookDto.setAuthor("Updated Author");
-        updateBookDto.setIsbn("Updated ISBN");
-        updateBookDto.setPrice(BigDecimal.valueOf(29.99));
-        updateBookDto.setDescription("Updated Description");
-        updateBookDto.setCoverImage("Updated Cover Image");
-
         Book existingBook = new Book();
-        existingBook.setId(1L);
-        existingBook.setTitle("Existing Book Title");
-        existingBook.setAuthor("Existing Book Author");
-        existingBook.setIsbn("1234567890123");
-        existingBook.setPrice(BigDecimal.valueOf(19.99));
-        existingBook.setDescription("Existing Book Description");
-        existingBook.setCoverImage("existing-book-cover.jpg");
-        existingBook.setDeleted(false);
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
-
         when(bookRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-
         when(bookMapper.toDto(any())).thenAnswer(invocation -> {
             Book bookArgument = invocation.getArgument(0);
             BookDto bookDto = new BookDto();
@@ -159,8 +141,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should throw EntityNotFoundException when updating a non-existing book")
-    void updateNonExistingBook() {
+    @DisplayName("updateBook -> Non-Existing Book -> EntityNotFoundException")
+    void updateBook_NonExistingBookId_EntityNotFoundException() {
         Long nonExistingBookId = 999L;
         BookRequestDto updateBookDto = new BookRequestDto();
         when(bookRepository.findById(nonExistingBookId)).thenReturn(Optional.empty());
@@ -169,8 +151,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should delete an existing book")
-    void deleteBook() {
+    @DisplayName("deleteBook -> Long -> void")
+    void deleteBook_ExistingBookId_Void() {
         Long bookId = 1L;
 
         BookRepository bookRepository = mock(BookRepository.class);
@@ -182,12 +164,9 @@ public class BookServiceImplTests {
         verify(bookRepository, times(1)).saveAndFlush(any());
     }
 
-
-
-
     @Test
-    @DisplayName("Should search for books")
-    void searchBooks() {
+    @DisplayName("searchBooks -> String, String, BigDecimal, String -> List<BookDto>")
+    void searchBooks_StringStringBigDecimalString_ReturnsListBookDto() {
         BigDecimal price = BigDecimal.valueOf(29.99);
         List<Book> books = new ArrayList<>();
         when(bookRepository.findAll(any(Specification.class))).thenReturn(books);
@@ -201,8 +180,8 @@ public class BookServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should find books by category ID")
-    void findAllByCategoryId() {
+    @DisplayName("findAllByCategoryIdAndNotDeleted -> Long, Pageable -> Page<BookDto>")
+    void findAllByCategoryIdAndNotDeleted_LongAndPageable_ReturnsPageOfBookDto() {
         Long categoryId = 1L;
         Pageable pageable = Pageable.unpaged();
         Page<Book> booksPage = Page.empty();

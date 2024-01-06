@@ -6,6 +6,7 @@ import com.book.store.model.Status;
 import com.book.store.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class OrderControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -57,10 +57,10 @@ public class OrderControllerTest {
     }
 
     @Test
-    void testPlaceOrder_ValidOrder_ReturnsCreatedStatus() throws Exception {
+    @DisplayName("placeOrder -> ValidOrder -> ReturnsCreatedStatus")
+    void placeOrder_ValidOrder_ReturnsCreatedStatus() throws Exception {
         OrderDto orderDto = createValidOrderDto();
         OrderDto createdOrder = createValidOrderDto();
-
         when(orderService.placeOrder(any(OrderDto.class))).thenReturn(createdOrder);
 
         ResultActions result = mockMvc.perform(post("/api/orders")
@@ -73,7 +73,8 @@ public class OrderControllerTest {
     }
 
     @Test
-    void testGetUserOrderHistory_ReturnsOrderHistory() throws Exception {
+    @DisplayName("getUserOrderHistory -> ReturnsOrderHistory")
+    void getUserOrderHistory_ReturnsOrderHistory() throws Exception {
         List<OrderDto> orderHistory = Arrays.asList(createValidOrderDto(), createValidOrderDto());
         when(orderService.getUserOrderHistory()).thenReturn(orderHistory);
 
@@ -85,7 +86,8 @@ public class OrderControllerTest {
     }
 
     @Test
-    void testUpdateOrderStatus_ValidOrder_ReturnsNoContent() throws Exception {
+    @DisplayName("updateOrderStatus -> ValidOrderId -> ReturnsNoContent")
+    void updateOrderStatus_ValidOrderId_ReturnsNoContent() throws Exception {
         Long orderId = 1L;
         OrderDto orderDto = createValidOrderDto();
 

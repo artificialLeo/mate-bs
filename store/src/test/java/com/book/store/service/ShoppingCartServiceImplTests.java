@@ -25,7 +25,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class ShoppingCartServiceImplTests {
-
     @Mock
     private ShoppingCartRepository shoppingCartRepository;
 
@@ -47,27 +46,23 @@ class ShoppingCartServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get user shopping cart")
-    void getUserShoppingCart() {
-        // Given
+    @DisplayName("getUserShoppingCart -> Get User Shopping Cart -> Returns ShoppingCartResponseDto")
+    void getUserShoppingCart_GetUserShoppingCart_ReturnsShoppingCartResponseDto() {
         Long userId = 1L;
         Optional<ShoppingCart> optionalShoppingCart = Optional.of(new ShoppingCart());
         when(shoppingCartRepository.findByUser_Id(userId)).thenReturn(optionalShoppingCart);
         when(shoppingCartMapper.mapToShoppingCartResponse(any())).thenReturn(new ShoppingCartResponseDto());
 
-        // When
         ShoppingCartResponseDto result = shoppingCartService.getUserShoppingCart(userId);
 
-        // Then
         Assertions.assertNotNull(result);
         verify(shoppingCartRepository, times(1)).findByUser_Id(userId);
         verify(shoppingCartMapper, times(1)).mapToShoppingCartResponse(any());
     }
 
     @Test
-    @DisplayName("Should add book to cart")
-    void addBookToCart() {
-        // Given
+    @DisplayName("addBookToCart -> Add Book to Cart -> Returns ShoppingCartResponseDto")
+    void addBookToCart_AddBookToCart_ReturnsShoppingCartResponseDto() {
         Long userId = 1L;
         Long bookId = 1L;
         int quantity = 2;
@@ -77,10 +72,8 @@ class ShoppingCartServiceImplTests {
         when(bookRepository.findById(bookId)).thenReturn(optionalBook);
         when(shoppingCartMapper.mapToShoppingCartResponse(any())).thenReturn(new ShoppingCartResponseDto());
 
-        // When
         ShoppingCartResponseDto result = shoppingCartService.addBookToCart(userId, bookId, quantity);
 
-        // Then
         Assertions.assertNotNull(result);
         verify(shoppingCartRepository, times(1)).findByUser_Id(userId);
         verify(bookRepository, times(1)).findById(bookId);
@@ -89,19 +82,16 @@ class ShoppingCartServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should update cart item quantity")
-    void updateCartItemQuantity() {
-        // Given
+    @DisplayName("updateCartItemQuantity -> Update Cart Item Quantity -> Returns CartItemResponseDto")
+    void updateCartItemQuantity_UpdateCartItemQuantity_ReturnsCartItemResponseDto() {
         Long cartItemId = 1L;
         int quantity = 3;
         Optional<CartItem> optionalCartItem = Optional.of(new CartItem());
         when(cartItemRepository.findById(cartItemId)).thenReturn(optionalCartItem);
         when(shoppingCartMapper.mapToCartItemResponse(any())).thenReturn(new CartItemResponseDto());
 
-        // When
         CartItemResponseDto result = shoppingCartService.updateCartItemQuantity(cartItemId, quantity);
 
-        // Then
         Assertions.assertNotNull(result);
         verify(cartItemRepository, times(1)).findById(cartItemId);
         verify(cartItemRepository, times(1)).save(any());
@@ -109,15 +99,12 @@ class ShoppingCartServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should remove book from cart")
-    void removeBookFromCart() {
-        // Given
+    @DisplayName("removeBookFromCart -> Remove Book from Cart -> No Return Value")
+    void removeBookFromCart_RemoveBookFromCart_NoReturnValue() {
         Long cartItemId = 1L;
 
-        // When
         shoppingCartService.removeBookFromCart(cartItemId);
 
-        // Then
         verify(cartItemRepository, times(1)).deleteById(cartItemId);
     }
 }

@@ -11,6 +11,7 @@ import com.book.store.service.BookService;
 import com.book.store.service.CategoryService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
@@ -45,7 +46,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -59,22 +59,13 @@ public class CategoryControllerTest {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private BookMapper bookMapper;
-
-    @Autowired
     private BookRepository bookRepository;
 
     @Mock
     private CategoryService categoryService;
 
-    @Mock
-    private BookService bookService;
-
     @Autowired
     private WebApplicationContext webApplicationContext;
-
-    @InjectMocks
-    private CategoryController categoryController;
 
     private Category category;
     private Book book;
@@ -106,16 +97,13 @@ public class CategoryControllerTest {
     }
 
     public static String generateRandomIsbn() {
-        // Create a list of characters from the ISBN string
         List<Character> isbnChars = new ArrayList<>();
         for (char digit : "0123456789123".toCharArray()) {
             isbnChars.add(digit);
         }
 
-        // Shuffle the characters
         Collections.shuffle(isbnChars);
 
-        // Create a StringBuilder to reconstruct the shuffled ISBN
         StringBuilder shuffledIsbn = new StringBuilder();
         for (char digit : isbnChars) {
             shuffledIsbn.append(digit);
@@ -125,8 +113,9 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("createCategory -> SuccessfulCreation -> ReturnsCreatedCategoryDto")
     @Transactional
-    void testCreateCategory_SuccessfulCreation() throws Exception {
+    void createCategory_SuccessfulCreation_ReturnsCreatedCategoryDto() throws Exception {
         CategoryDto categoryDto = new CategoryDto("Fiction", "Fictional Books");
         when(categoryService.save(any())).thenReturn(categoryDto);
 
@@ -141,8 +130,9 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("getAllCategories -> Successful -> ReturnsPageOfCategories")
     @Transactional
-    void testGetAllCategories_Successful() throws Exception {
+    void getAllCategories_Successful_ReturnsPageOfCategories() throws Exception {
         List<CategoryDto> categoryDtoList = categoryRepository.findAll()
                 .stream()
                 .map(categoryMapper::toDto)
@@ -155,7 +145,6 @@ public class CategoryControllerTest {
         ResultActions result = mockMvc.perform(get("/api/categories"));
 
         String content = result.andReturn().getResponse().getContentAsString();
-        System.out.println("Response Content: " + content);
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].name").value("Fiction"))
@@ -163,12 +152,13 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("getCategoryById -> Successful -> ReturnsCategoryDto")
     @Transactional
-    void testGetCategoryById_Successful() throws Exception {
+    void getCategoryById_Successful_ReturnsCategoryDto() throws Exception {
         when(categoryService.getById(1L)).thenReturn(categoryMapper.toDto(category));
 
-        assertEquals(categoryRepository.findAll().get(0).getId(), 4);
-        ResultActions result = mockMvc.perform(get("/api/categories/4"));
+        assertEquals(7, categoryRepository.findAll().get(0).getId());
+        ResultActions result = mockMvc.perform(get("/api/categories/7"));
 
         result.andExpect(status().isOk());
         CategoryDto fetchedCategory = objectMapper.readValue(result.andReturn().getResponse().getContentAsString(), CategoryDto.class);
@@ -177,12 +167,14 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("updateCategory -> SuccessfulUpdate -> ReturnsUpdatedCategoryDto")
     @Transactional
-    void testUpdateCategory_SuccessfulUpdate() throws Exception {
+    void updateCategory_SuccessfulUpdate_ReturnsUpdatedCategoryDto() throws Exception {
         CategoryDto updatedCategoryDto = new CategoryDto("Fantasy", "Fantasy Books");
         when(categoryService.update(1L, updatedCategoryDto)).thenReturn(updatedCategoryDto);
 
-        ResultActions result = mockMvc.perform(put("/api/categories/2")
+        assertEquals(6, categoryRepository.findAll().get(0).getId());
+        ResultActions result = mockMvc.perform(put("/api/categories/6")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedCategoryDto)));
 
@@ -193,28 +185,16 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("getBooksByCategoryId -> Successful -> ReturnsPageOfBooks")
     @Transactional
-    void testGetBooksByCategoryId_Successful() throws Exception {
-//        categoryRepository.save(category);
-//        bookRepository.save(book);
-
-        assertEquals(bookRepository.findAll().get(0).getId(), 3);
-        assertEquals(categoryRepository.findAll().get(0).getId(), 3);
-        ResultActions result = mockMvc.perform(get("/api/categories/3/books"));
-
-
+    void getBooksByCategoryId_Successful_ReturnsPageOfBooks() throws Exception {
+        assertEquals(4, bookRepository.findAll().get(0).getId());
+        assertEquals(5, categoryRepository.findAll().get(0).getId());
+        ResultActions result = mockMvc.perform(get("/api/categories/5/books"));
 
         result.andExpect(status().isOk());
         Map<String, Object> resultMap = objectMapper.readValue(result.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
-
         List<Map<String, Object>> contentList = (List<Map<String, Object>>) resultMap.get("content");
-        System.out.println("Categories count: " + categoryRepository.count());
-        System.out.println("Books count: " + bookRepository.findAll().stream().findFirst().orElseThrow().getId());
-        String content = result.andReturn().getResponse().getContentAsString();
-        System.out.println("Response Content: " + content);
-
-
-
 
         assertEquals(book.getTitle(), contentList.get(0).get("title"));
         assertEquals(book.getAuthor(), contentList.get(0).get("author"));
@@ -222,14 +202,15 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("deleteCategory -> SuccessfulDeletion -> ReturnsNoContent")
     @Transactional
-    void testDeleteCategory_SuccessfulDeletion() throws Exception {
-//        categoryRepository.save(category);
-        assertEquals(categoryRepository.findAll().get(0).getId(), 5);
-        ResultActions result = mockMvc.perform(delete("/api/categories/5"));
+    void deleteCategory_SuccessfulDeletion_ReturnsNoContent() throws Exception {
+        categoryRepository.saveAndFlush(category);
+        assertEquals(1, categoryRepository.findAll().stream().findFirst().orElseThrow().getId());
+        ResultActions result = mockMvc.perform(delete("/api/categories/1"));
 
         result.andExpect(status().isNoContent());
-        assertTrue(categoryRepository.findById(5L).orElseThrow().isDeleted());
+        assertTrue(categoryRepository.findById(1L).orElseThrow().isDeleted());
     }
 
 }

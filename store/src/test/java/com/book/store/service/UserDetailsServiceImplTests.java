@@ -17,8 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserDetailsServiceImplTests {
-
+class UserDetailsServiceImplTests {
     @Mock
     private UserRepository userRepository;
 
@@ -31,7 +30,7 @@ public class UserDetailsServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should load user by email")
+    @DisplayName("loadUserByUsername -> User Found -> Return UserDetails")
     void loadUserByUsername_UserFound_ReturnUserDetails() {
         String userEmail = "test@example.com";
         User user = new User();
@@ -40,7 +39,6 @@ public class UserDetailsServiceImplTests {
         user.setLastName("ln");
         user.setShippingAddress("LA");
         user.setPassword("testPassword");
-
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
@@ -57,10 +55,9 @@ public class UserDetailsServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should throw UsernameNotFoundException when user not found")
+    @DisplayName("loadUserByUsername -> User Not Found -> Throw UsernameNotFoundException")
     void loadUserByUsername_UserNotFound_ThrowUsernameNotFoundException() {
         String userEmail = "nonexistent@example.com";
-
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> userDetailsService.loadUserByUsername(userEmail));

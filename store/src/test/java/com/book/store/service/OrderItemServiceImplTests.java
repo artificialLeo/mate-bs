@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class OrderItemServiceImplTests {
-
     @Mock
     private OrderItemRepository orderItemRepository;
 
@@ -37,8 +36,8 @@ class OrderItemServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get all order items for a given order ID")
-    void getAllOrderItems() {
+    @DisplayName("getAllOrderItems -> Get All Order Items for a Given Order ID -> Returns Set of OrderItemDto")
+    void getAllOrderItems_GetAll_ReturnsSetOfOrderItemDto() {
         Long orderId = 1L;
         when(orderItemRepository.findAllByOrderId(orderId)).thenReturn(Collections.emptySet());
 
@@ -50,8 +49,8 @@ class OrderItemServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get a specific order item for a given order ID and item ID")
-    void getOrderItem() {
+    @DisplayName("getOrderItem -> Get Order Item for a Given Order ID and Item ID -> Throws EntityNotFoundException")
+    void getOrderItem_GetOrderItem_ThrowsEntityNotFoundException() {
         Long orderId = 1L;
         Long itemId = 1L;
         when(orderItemRepository.findByIdAndOrderId(itemId, orderId)).thenReturn(Optional.ofNullable(null));

@@ -23,7 +23,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class CategoryServiceImplTests {
-
     @Mock
     private CategoryRepository categoryRepository;
 
@@ -32,7 +31,6 @@ class CategoryServiceImplTests {
 
     @Mock
     private BookRepository bookRepository;
-
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -43,8 +41,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should find all categories")
-    void findAllCategories() {
+    @DisplayName("findAllCategories -> Find All Categories -> Returns Page of CategoryDto")
+    void findAllCategories_FindAll_ReturnsPageOfCategoryDto() {
         Pageable pageable = Pageable.unpaged();
         Page<Category> categoryPage = Page.empty();
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
@@ -58,8 +56,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should get a category by ID")
-    void getCategoryById() {
+    @DisplayName("getCategoryById -> Get Category by ID -> Returns CategoryDto")
+    void getCategoryById_GetById_ReturnsCategoryDto() {
         Long categoryId = 1L;
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(new Category()));
         when(categoryMapper.toDto(any())).thenReturn(new CategoryDto());
@@ -72,8 +70,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should throw RuntimeException when getting a non-existing category by ID")
-    void getNonExistingCategoryById() {
+    @DisplayName("getNonExistingCategoryById -> Get Non-Existing Category by ID -> Throws RuntimeException")
+    void getNonExistingCategoryById_GetNonExisting_ThrowsRuntimeException() {
         Long nonExistingCategoryId = 999L;
         when(categoryRepository.findById(nonExistingCategoryId)).thenReturn(Optional.empty());
 
@@ -81,8 +79,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should save a category")
-    void saveCategory() {
+    @DisplayName("saveCategory -> Save Category -> Returns Saved CategoryDto")
+    void saveCategory_Save_ReturnsSavedCategoryDto() {
         CategoryDto categoryDto = new CategoryDto();
         Category category = new Category();
         when(categoryMapper.toEntity(categoryDto)).thenReturn(category);
@@ -98,8 +96,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should update an existing category")
-    void updateCategory() {
+    @DisplayName("updateCategory -> Update Existing Category -> Returns Updated CategoryDto")
+    void updateCategory_UpdateExisting_ReturnsUpdatedCategoryDto() {
         Long categoryId = 1L;
         CategoryDto updateCategoryDto = new CategoryDto();
         Category existingCategory = new Category();
@@ -119,8 +117,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should throw RuntimeException when updating a non-existing category")
-    void updateNonExistingCategory() {
+    @DisplayName("updateNonExistingCategory -> Update Non-Existing Category -> Throws RuntimeException")
+    void updateNonExistingCategory_UpdateNonExisting_ThrowsRuntimeException() {
         Long nonExistingCategoryId = 999L;
         CategoryDto updateCategoryDto = new CategoryDto();
         when(categoryRepository.findById(nonExistingCategoryId)).thenReturn(Optional.empty());
@@ -129,8 +127,8 @@ class CategoryServiceImplTests {
     }
 
     @Test
-    @DisplayName("Should delete an existing category by ID")
-    void deleteCategoryById() {
+    @DisplayName("deleteCategoryById -> Delete Existing Category by ID")
+    void deleteCategoryById_DeleteExistingCategory() {
         Long categoryId = 1L;
 
         CategoryRepository categoryRepository = mock(CategoryRepository.class);
@@ -141,5 +139,4 @@ class CategoryServiceImplTests {
 
         verify(categoryRepository, times(1)).saveAndFlush(any());
     }
-
 }

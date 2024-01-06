@@ -3,6 +3,7 @@ package com.book.store.controller;
 import com.book.store.dto.OrderItemDto;
 import com.book.store.service.OrderItemService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,26 +46,30 @@ class OrderItemControllerTest {
     }
 
     @Test
-    void testGetAllOrderItems_Successful() throws Exception {
+    @DisplayName("getAllOrderItems -> Successful -> ReturnsOk")
+    void getAllOrderItems_ExistingOrderItemId_Successful() throws Exception {
         Set<OrderItemDto> orderItems = createOrderItems();
         when(orderItemService.getAllOrderItems(anyLong())).thenReturn(orderItems);
 
-        mockMvc.perform(get("/api/orders/1/items")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        ResultActions result = mockMvc.perform(get("/api/orders/1/items")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].id").value(orderItems.iterator().next().getId()));
     }
 
     @Test
-    void testGetOrderItem_Successful() throws Exception {
+    @DisplayName("getOrderItem -> Successful -> ReturnsOk")
+    void getOrderItem_ExistingOrderItemIdAndItemId_Successful() throws Exception {
         OrderItemDto orderItem = createOrderItem();
         when(orderItemService.getOrderItem(anyLong(), anyLong())).thenReturn(orderItem);
 
-        mockMvc.perform(get("/api/orders/1/items/2")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        ResultActions result = mockMvc.perform(get("/api/orders/1/items/2")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(orderItem.getId()));
     }
