@@ -1,8 +1,10 @@
 package com.book.store.repo;
 
-import com.book.store.config.TestDataInitializer;
+import com.book.store.model.Book;
 import com.book.store.model.Order;
 import com.book.store.model.OrderItem;
+import com.book.store.model.Status;
+import com.book.store.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,38 +33,88 @@ public class OrderItemRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TestDataInitializer testDataInitializer;
+    private Order order;
+    private OrderItem orderItem;
 
     @BeforeEach
     public void setUp() {
-        testDataInitializer.initializeTestData();
+        User user = new User();
+        user.setEmail("user@example.com");
+        user.setPassword("password");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setShippingAddress("123 Main St");
+        userRepository.save(user);
+
+        Book book = new Book();
+        book.setTitle("Example Book");
+        book.setAuthor("Author");
+        book.setIsbn("1234567890123");
+        book.setPrice(BigDecimal.valueOf(29.99));
+        book.setDescription("Book Description");
+        book.setCoverImage("book_cover.jpg");
+        bookRepository.save(book);
+
+        order = new Order();
+        order.setUser(user);
+        order.setStatus(Status.PENDING);
+        order.setTotal(BigDecimal.valueOf(59.98));
+        order.setOrderDate(LocalDateTime.now());
+        order.setShippingAddress("Shipping Address");
+        orderRepository.save(order);
+
+        orderItem = new OrderItem();
+        orderItem.setOrder(order);
+        orderItem.setBook(book);
+        orderItem.setQuantity(2);
+        orderItem.setPrice(BigDecimal.valueOf(29.99));
+        orderItemRepository.save(orderItem);
     }
 
     @Test
-    @DisplayName("Should find OrderItems by Order ID")
-    public void findAllByOrderId_PresentIdPassed_ReturnSet() {
-        Order order = orderRepository.findAll().get(0);
+    @DisplayName("findAllByOrderId -> Set size")
+    public void findAllByOrderId_PresentIdPassed_ReturnSetSize() {
         Set<OrderItem> orderItems = orderItemRepository.findAllByOrderId(order.getId());
 
-        long expectedOrderId = 1L;
-        long actualOrderId = order.getId();
-        Assertions.assertEquals(expectedOrderId, actualOrderId);
-
-        int expectedSize = 5;
-        int actualSize = orderItems.size();
-        Assertions.assertEquals(expectedSize, actualSize);
+        int expected = 1;
+        int actual = orderItems.size();
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    @DisplayName("Should find OrderItem by Item ID and Order ID")
+    @DisplayName("findAllByOrderId -> OrderItem Id")
+    public void findAllByOrderId_PresentIdPassed_ReturnId() {
+        Set<OrderItem> orderItems = orderItemRepository.findAllByOrderId(order.getId());
+
+        long expected = 2L;
+        long actual = orderItems.stream().findFirst().orElseThrow().getId();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("findByIdAndOrderId -> OrderItem Id")
     public void findByIdAndOrderId_OrderItemPassed_ReturnOrderItem() {
-        Order order = orderRepository.findAll().get(0);
-        OrderItem orderItem = orderItemRepository.findAllByOrderId(order.getId()).stream().findFirst().orElse(null);
-
         Optional<OrderItem> foundOrderItem = orderItemRepository.findByIdAndOrderId(orderItem.getId(), order.getId());
-
         Assertions.assertTrue(foundOrderItem.isPresent());
+
+        OrderItem actualOrderItem = foundOrderItem.get();
+
+        long expected = orderItem.getId();
+        long actual = actualOrderItem.getId();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("findByIdAndOrderId -> Order Id")
+    public void findByIdAndOrderId_OrderItemPassed_ReturnOrder() {
+        Optional<OrderItem> foundOrderItem = orderItemRepository.findByIdAndOrderId(orderItem.getId(), order.getId());
+        Assertions.assertTrue(foundOrderItem.isPresent());
+
+        OrderItem actualOrderItem = foundOrderItem.get();
+
+        long expected = order.getId();
+        long actual = actualOrderItem.getOrder().getId();
+        Assertions.assertEquals(expected, actual);
     }
 
 }

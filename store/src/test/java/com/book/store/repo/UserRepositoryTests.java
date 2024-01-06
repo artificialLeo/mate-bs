@@ -1,6 +1,5 @@
 package com.book.store.repo;
 
-import com.book.store.config.TestDataInitializer;
 import com.book.store.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,15 +17,10 @@ public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TestDataInitializer testDataInitializer;
-
     User newUser;
 
     @BeforeEach
     public void setUp() {
-        testDataInitializer.initializeTestData();
-
         newUser = new User();
         newUser.setEmail("test@example.com");
         newUser.setFirstName("fn");
@@ -37,7 +31,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    @DisplayName("Should check if user exists by email")
+    @DisplayName("existsByEmail -> Exists true")
     public void existsByEmail_ExistingEmail_ReturnTrue() {
         boolean exists = userRepository.existsByEmail("test@example.com");
 
@@ -45,7 +39,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    @DisplayName("Should check if user does not exist by email")
+    @DisplayName("existsByEmail -> Exists false")
     public void existsByEmail_NonExistingEmail_ReturnFalse() {
         boolean exists = userRepository.existsByEmail("nonexistent@example.com");
 
@@ -53,16 +47,19 @@ public class UserRepositoryTests {
     }
 
     @Test
-    @DisplayName("Should find user by email")
+    @DisplayName("findByEmail -> Email")
     public void findByEmail_ExistingEmail_ReturnUser() {
         Optional<User> foundUser = userRepository.findByEmail("test@example.com");
-
         Assertions.assertTrue(foundUser.isPresent());
-        Assertions.assertEquals(newUser.getEmail(), foundUser.get().getEmail());
+
+
+        String expected = newUser.getEmail();
+        String actual = foundUser.get().getEmail();
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    @DisplayName("Should not find user by non-existing email")
+    @DisplayName("findByEmail -> Empty true")
     public void findByEmail_NonExistingEmail_ReturnEmptyOptional() {
         Optional<User> foundUser = userRepository.findByEmail("nonexistent@example.com");
 

@@ -1,6 +1,5 @@
 package com.book.store.repo;
 
-import com.book.store.config.TestDataInitializer;
 import com.book.store.model.ShoppingCart;
 import com.book.store.model.User;
 import org.junit.jupiter.api.Assertions;
@@ -16,24 +15,14 @@ import java.util.Optional;
 @SpringBootTest
 @Transactional
 public class ShoppingCartRepositoryTests {
-
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TestDataInitializer testDataInitializer;
-
     @BeforeEach
     public void setUp() {
-        testDataInitializer.initializeTestData();
-    }
-
-    @Test
-    @DisplayName("Should find ShoppingCart by User ID")
-    public void findByUser_Id_ExistingUserId_ReturnShoppingCart() {
         User newUser = new User();
         newUser.setEmail("test@example.com");
         newUser.setFirstName("fn");
@@ -45,18 +34,24 @@ public class ShoppingCartRepositoryTests {
         ShoppingCart newShoppingCart = new ShoppingCart();
         newShoppingCart.setUser(newUser);
         shoppingCartRepository.save(newShoppingCart);
-
-        Optional<User> userOptional = userRepository.findById(newUser.getId());
-        User user = userOptional.orElseThrow();
-
-        Optional<ShoppingCart> shoppingCartOptional = shoppingCartRepository.findByUser_Id(user.getId());
-        ShoppingCart retrievedShoppingCart = shoppingCartOptional.orElseThrow();
-
-        Assertions.assertEquals(retrievedShoppingCart.getUser(), user);
     }
 
     @Test
-    @DisplayName("Should not find ShoppingCart by Non-Existing User ID")
+    @DisplayName("findByUser_Id -> User")
+    public void findByUser_Id_ExistingUserId_ReturnUserShoppingCart() {
+        Optional<User> userOptional = userRepository.findByEmail("test@example.com");
+        Assertions.assertTrue(userOptional.isPresent());
+        User actual = userOptional.get();
+
+        Optional<ShoppingCart> shoppingCartOptional = shoppingCartRepository.findByUser_Id(actual.getId());
+        Assertions.assertTrue(shoppingCartOptional.isPresent());
+        User expected = shoppingCartOptional.get().getUser();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("findByUser_Id -> Empty True")
     public void findByUser_Id_NonExistingUserId_ReturnEmptyOptional() {
         Long nonExistingUserId = 100L;
 

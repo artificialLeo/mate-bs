@@ -1,7 +1,5 @@
 package com.book.store.repo;
 
-import com.book.store.config.CustomMySqlContainer;
-import com.book.store.config.TestDataInitializer;
 import com.book.store.model.Book;
 import com.book.store.model.Category;
 import jakarta.transaction.Transactional;
@@ -26,23 +24,18 @@ public class BookRepositoryTests {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    private TestDataInitializer testDataInitializer;
+    private Category category;
+    private Book book1;
+    private Book book2;
 
     @BeforeEach
     public void setUp() {
-        testDataInitializer.initializeTestData();
-    }
-
-    @Test
-    @DisplayName("Should find books by Category ID when category exists")
-    public void findAllByCategoryId_CategoryExists_ReturnBooks() {
-        Category category = new Category();
+        category = new Category();
         category.setName("Test Category");
         category.setDescription("Category Description");
         categoryRepository.save(category);
 
-        Book book1 = new Book();
+        book1 = new Book();
         book1.setTitle("Book 1");
         book1.setAuthor("Author 1");
         book1.setIsbn("1234562390123");
@@ -52,7 +45,7 @@ public class BookRepositoryTests {
         book1.getCategories().add(category);
         bookRepository.save(book1);
 
-        Book book2 = new Book();
+        book2 = new Book();
         book2.setTitle("Book 2");
         book2.setAuthor("Author 2");
         book2.setIsbn("9843543210987");
@@ -61,31 +54,44 @@ public class BookRepositoryTests {
         book2.setCoverImage("cover2.jpg");
         book2.getCategories().add(category);
         bookRepository.save(book2);
+    }
 
+    @Test
+    @DisplayName("findAllByCategoryId -> List size")
+    public void findAllByCategoryId_CategoryExists_ReturnBooks() {
         Long categoryId = category.getId();
         Pageable pageable = Pageable.unpaged();
 
         List<Book> books = bookRepository.findAllByCategoryIdAndNotDeleted(categoryId, pageable).stream().toList();
 
-        int expectedSize = 2;
-        int actualSize = books.size();
-        Assertions.assertEquals(expectedSize, actualSize);
+        int expected = 2;
+        int actual = books.size();
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    @DisplayName("Should find book by ID and is not deleted when book exists")
+    @DisplayName("findByIdAndIsDeletedFalse -> Book Id")
     public void findByIdAndIsDeletedFalse_BookExists_ReturnBook() {
         Book savedBook = bookRepository.findAll().get(0);
         Optional<Book> foundBook = bookRepository.findByIdAndDeletedFalse(savedBook.getId());
 
         Assertions.assertTrue(foundBook.isPresent());
 
-        long expectedId = savedBook.getId();
-        long actualId = foundBook.get().getId();
-        Assertions.assertEquals(expectedId, actualId);
+        long expected = savedBook.getId();
+        long actual = foundBook.get().getId();
+        Assertions.assertEquals(expected, actual);
+    }
 
-        long expectedSize = 5;
-        long actualSize = bookRepository.findAll().size();
-        Assertions.assertEquals(expectedSize, actualSize);
+    @Test
+    @DisplayName("findByIdAndIsDeletedFalse -> List size")
+    public void findByIdAndIsDeletedFalse_BookExists_ReturnBooks() {
+        Book savedBook = bookRepository.findAll().get(0);
+        Optional<Book> foundBook = bookRepository.findByIdAndDeletedFalse(savedBook.getId());
+
+        Assertions.assertTrue(foundBook.isPresent());
+
+        long expected = 2;
+        long actual = bookRepository.findAll().size();
+        Assertions.assertEquals(expected, actual);
     }
 }

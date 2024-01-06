@@ -14,6 +14,7 @@ public interface ShoppingCartMapper {
     @Mapping(source = "cartItem.book.title", target = "bookTitle")
     CartItemResponseDto mapToCartItemResponse(CartItem cartItem);
 
+    @Mapping(target = "userId", ignore = true)
     @Mapping(source = "cartItems", target = "cartItems")
     ShoppingCartResponseDto mapToShoppingCartResponse(ShoppingCart shoppingCart);
 }

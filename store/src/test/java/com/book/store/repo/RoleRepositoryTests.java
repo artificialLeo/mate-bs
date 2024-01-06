@@ -1,6 +1,5 @@
 package com.book.store.repo;
 
-import com.book.store.config.TestDataInitializer;
 import com.book.store.model.Role;
 import com.book.store.model.RoleName;
 import org.junit.jupiter.api.Assertions;
@@ -14,34 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 public class RoleRepositoryTests {
-
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
-    private TestDataInitializer testDataInitializer;
+    private Role roleUser;
 
     @BeforeEach
     public void setUp() {
-        testDataInitializer.initializeTestData();
+        roleUser = new Role();
+        roleUser.setName(RoleName.ROLE_USER);
+        roleRepository.save(roleUser);
     }
 
     @Test
-    @DisplayName("Should find Role by Name")
+    @DisplayName("findByName -> RoleName")
     public void findByName_ExistingRoleName_ReturnRole() {
-        RoleName roleName = RoleName.ROLE_USER;
-        Role role = roleRepository.findByName(roleName);
+        RoleName expected = RoleName.ROLE_USER;
+        RoleName actual = roleRepository.findByName(expected).getName();
 
-        Assertions.assertNotNull(role);
-        Assertions.assertEquals(roleName, role.getName());
-    }
-
-    @Test
-    @DisplayName("Should not find Role by Non-Existing Name")
-    public void findByName_NonExistingRoleName_ReturnNull() {
-        RoleName existingRoleName = RoleName.ROLE_ADMIN;
-        Role role = roleRepository.findByName(existingRoleName);
-
-        Assertions.assertNotNull(role);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(expected, actual);
     }
 }
