@@ -24,8 +24,6 @@ public class BookRepositoryTests {
     private CategoryRepository categoryRepository;
 
     private Category category;
-    private Book book1;
-    private Book book2;
 
     @BeforeEach
     public void setUp() {
@@ -34,25 +32,15 @@ public class BookRepositoryTests {
         category.setDescription("Category Description");
         categoryRepository.save(category);
 
-        book1 = new Book();
-        book1.setTitle("Book 1");
-        book1.setAuthor("Author 1");
-        book1.setIsbn("1234562390123");
-        book1.setPrice(BigDecimal.valueOf(29.99));
-        book1.setDescription("Description 1");
-        book1.setCoverImage("cover1.jpg");
-        book1.getCategories().add(category);
-        bookRepository.save(book1);
-
-        book2 = new Book();
-        book2.setTitle("Book 2");
-        book2.setAuthor("Author 2");
-        book2.setIsbn("9843543210987");
-        book2.setPrice(BigDecimal.valueOf(39.99));
-        book2.setDescription("Description 2");
-        book2.setCoverImage("cover2.jpg");
-        book2.getCategories().add(category);
-        bookRepository.save(book2);
+        Book newBook = new Book();
+        newBook.setTitle("Book 1");
+        newBook.setAuthor("Author 1");
+        newBook.setIsbn("1234562390123");
+        newBook.setPrice(BigDecimal.valueOf(29.99));
+        newBook.setDescription("Description 1");
+        newBook.setCoverImage("cover1.jpg");
+        newBook.getCategories().add(category);
+        bookRepository.save(newBook);
     }
 
     @Test
@@ -65,7 +53,7 @@ public class BookRepositoryTests {
 
         List<Book> books = bookRepository.findAllByCategoryIdAndNotDeleted(categoryId, pageable).stream().toList();
 
-        int expected = 2;
+        int expected = 1;
         int actual = books.size();
         Assertions.assertEquals(expected, actual);
     }
@@ -95,7 +83,7 @@ public class BookRepositoryTests {
 
         Assertions.assertTrue(foundBook.isPresent());
 
-        long expected = 2;
+        long expected = 1;
         long actual = bookRepository.findAll().size();
         Assertions.assertEquals(expected, actual);
     }

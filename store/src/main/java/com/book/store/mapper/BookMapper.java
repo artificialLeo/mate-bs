@@ -39,4 +39,9 @@ public interface BookMapper {
                 .map(Category::getId)
                 .collect(Collectors.toList());
     }
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "categories", ignore = true)
+    void updateBookFromDto(BookRequestDto updateBookDto, @MappingTarget Book existingBook);
 }

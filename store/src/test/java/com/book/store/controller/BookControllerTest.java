@@ -56,52 +56,32 @@ public class BookControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
-    private Category createTestCategory() {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("Category Description");
-        return categoryRepository.save(category);
-    }
-
-    private Book createTestBook(String title, String author, String isbn, BigDecimal price, String description, String coverImage, Category category) {
-        Book book = new Book();
-        book.setTitle(title);
-        book.setAuthor(author);
-        book.setIsbn(isbn);
-        book.setPrice(price);
-        book.setDescription(description);
-        book.setCoverImage(coverImage);
-        book.getCategories().add(category);
-        return bookRepository.save(book);
-    }
-
     @Test
     @DisplayName("getBookById -> WhenBookSaved -> ReturnsCorrectDto")
     @Transactional
     @Rollback
     public void getBookById_WhenBookSaved_ReturnsCorrectDto() throws Exception {
-        Category category = createTestCategory();
-        Book book1 = createTestBook("Book 1", "Author 1", "1234566690007", BigDecimal.valueOf(29.99), "Description 1", "cover1.jpg", category);
+        Book bookById = createTestBookTemplateWithCategory();
 
         String responseContent = mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/books/{id}", book1.getId())
+                        .get("/api/books/{id}", bookById.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         BookDto bookDto = objectMapper.readValue(responseContent, BookDto.class);
 
-        assertEquals(book1.getId(), bookDto.getId());
-        assertEquals("Book 1", bookDto.getTitle());
-        assertEquals("Author 1", bookDto.getAuthor());
-        assertEquals("1234566690007", bookDto.getIsbn());
+        assertEquals(bookById.getId(), bookDto.getId());
+        assertEquals("Existing Book", bookDto.getTitle());
+        assertEquals("Existing Author", bookDto.getAuthor());
+        assertEquals("1234567890002", bookDto.getIsbn());
         assertEquals(BigDecimal.valueOf(29.99), bookDto.getPrice());
-        assertEquals("Description 1", bookDto.getDescription());
-        assertEquals("cover1.jpg", bookDto.getCoverImage());
+        assertEquals("Existing Description", bookDto.getDescription());
+        assertEquals("existing_cover.jpg", bookDto.getCoverImage());
 
         List<Long> categoryIds = bookDto.getCategoryIds();
         assertNotNull(categoryIds);
-        assertTrue(categoryIds.contains(category.getId()));
+        assertTrue(categoryIds.contains(bookById.getCategories().stream().findFirst().orElseThrow().getId()));
     }
 
     @Test
@@ -120,16 +100,7 @@ public class BookControllerTest {
     @Transactional
     @Rollback
     public void createBook_WhenValidInput_BookCreated() throws Exception {
-        Category category = createTestCategory();
-
-        BookDto bookDto = new BookDto();
-        bookDto.setTitle("New Book");
-        bookDto.setAuthor("New Author");
-        bookDto.setIsbn("1234567890005");
-        bookDto.setPrice(BigDecimal.valueOf(19.99));
-        bookDto.setDescription("New Description");
-        bookDto.setCoverImage("new_cover.jpg");
-        bookDto.setCategoryIds(List.of(category.getId()));
+        BookDto bookDto = createTestBookDtoTemplate();
 
         String requestContent = objectMapper.writeValueAsString(bookDto);
 
@@ -151,20 +122,10 @@ public class BookControllerTest {
     @Transactional
     @Rollback
     public void updateBook_WhenValidInput_BookUpdated() throws Exception {
-        Category category = createTestCategory();
-        Book existingBook = createTestBook("Existing Book", "Existing Author", "1234567890004", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
-
-        BookDto updatedBookDto = new BookDto();
-        updatedBookDto.setTitle("Updated Book");
-        updatedBookDto.setAuthor("Updated Author");
-        updatedBookDto.setIsbn("1234567890003");
-        updatedBookDto.setPrice(BigDecimal.valueOf(39.99));
-        updatedBookDto.setDescription("Updated Description");
-        updatedBookDto.setCoverImage("updated_cover.jpg");
-        updatedBookDto.setCategoryIds(List.of(category.getId()));
+        Book existingBook = createTestBookTemplateWithCategory();
+        BookDto updatedBookDto = createTestBookDtoTemplate();
 
         String requestContent = objectMapper.writeValueAsString(updatedBookDto);
-
         String responseContent = mockMvc.perform(put("/api/books/{id}", existingBook.getId())
                         .content(requestContent)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -175,8 +136,8 @@ public class BookControllerTest {
 
         assertNotNull(updatedBook);
         assertEquals(existingBook.getId(), updatedBook.getId());
-        assertEquals("Updated Book", updatedBook.getTitle());
-        assertEquals(BigDecimal.valueOf(39.99), updatedBook.getPrice());
+        assertEquals("New Book", updatedBook.getTitle());
+        assertEquals(BigDecimal.valueOf(19.99), updatedBook.getPrice());
     }
 
     @Test
@@ -184,8 +145,7 @@ public class BookControllerTest {
     @Transactional
     @Rollback
     public void deleteBook_WhenBookExists_BookDeleted() throws Exception {
-        Category category = createTestCategory();
-        Book bookToDelete = createTestBook("Existing Book", "Existing Author", "1234567890002", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
+        Book bookToDelete = createTestBookTemplateWithCategory();
 
         mockMvc.perform(delete("/api/books/{id}", bookToDelete.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -200,11 +160,10 @@ public class BookControllerTest {
     @Transactional
     @Rollback
     public void searchBooks_WhenSearchCriteriaExist_ReturnsMatchingBooks() throws Exception {
-        Category category = createTestCategory();
-        Book book = createTestBook("Search Book", "Existing Author", "1234567890001", BigDecimal.valueOf(29.99), "Existing Description", "existing_cover.jpg", category);
+        createTestBookTemplateWithCategory();
 
         String responseContent = mockMvc.perform(get("/api/books/search")
-                        .param("title", "Search Book")
+                        .param("title", "Existing Book")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -212,6 +171,43 @@ public class BookControllerTest {
         List<BookDto> searchResult = objectMapper.readValue(responseContent, new TypeReference<>() {});
 
         assertNotNull(searchResult);
-        assertEquals("Search Book", searchResult.get(0).getTitle());
+        assertEquals(1, searchResult.size());
+        assertEquals("Existing Book", searchResult.get(0).getTitle());
     }
+
+    private Category createTestCategory() {
+        Category category = new Category();
+        category.setName("Test Category");
+        category.setDescription("Category Description");
+        return categoryRepository.save(category);
+    }
+
+    private Book createTestBookTemplateWithCategory() {
+        Category category = createTestCategory();
+
+        Book book = new Book();
+        book.setTitle("Existing Book");
+        book.setAuthor("Existing Author");
+        book.setIsbn("1234567890002");
+        book.setPrice(BigDecimal.valueOf(29.99));
+        book.setDescription("Existing Description");
+        book.setCoverImage("existing_cover.jpg");
+        book.getCategories().add(category);
+        return bookRepository.save(book);
+    }
+
+    private BookDto createTestBookDtoTemplate() {
+        Category category = createTestCategory();
+
+        BookDto bookDto = new BookDto();
+        bookDto.setTitle("New Book");
+        bookDto.setAuthor("New Author");
+        bookDto.setIsbn("1234567890005");
+        bookDto.setPrice(BigDecimal.valueOf(19.99));
+        bookDto.setDescription("New Description");
+        bookDto.setCoverImage("new_cover.jpg");
+        bookDto.setCategoryIds(List.of(category.getId()));
+        return bookDto;
+    }
+
 }

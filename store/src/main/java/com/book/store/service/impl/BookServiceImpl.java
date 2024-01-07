@@ -55,12 +55,8 @@ public class BookServiceImpl implements BookService {
                         () -> new EntityNotFoundException("Book with id "
                         + id + " not found."));
 
-        existingBook.setTitle(updateBookDto.getTitle());
-        existingBook.setAuthor(updateBookDto.getAuthor());
-        existingBook.setIsbn(updateBookDto.getIsbn());
-        existingBook.setPrice(updateBookDto.getPrice());
-        existingBook.setDescription(updateBookDto.getDescription());
-        existingBook.setCoverImage(updateBookDto.getCoverImage());
+        bookMapper.updateBookFromDto(updateBookDto, existingBook);
+
 
         Book updatedBook = bookRepository.save(existingBook);
 
