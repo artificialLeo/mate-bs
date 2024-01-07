@@ -1,29 +1,27 @@
 databaseChangeLog:
   - changeSet:
-      id: createOrderItemTable
-      author: kh
+      id: create-category-table
+      author: your_author_name
       changes:
         - createTable:
-            tableName: order_item
+            tableName: categories
             columns:
               - column:
                   name: id
                   type: BIGINT
                   autoIncrement: true
+                  constraints:
+                    primaryKey: true
               - column:
-                  name: order_id
-                  type: BIGINT
-              - column:
-                  name: book_id
-                  type: BIGINT
-              - column:
-                  name: quantity
-                  type: INT
+                  name: name
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
-                  name: price
-                  type: DECIMAL(19, 2)
+                  name: deleted
+                  type: BOOLEAN
                   constraints:
                     nullable: false
-
+              - column:
+                  name: description
+                  type: VARCHAR(255)
