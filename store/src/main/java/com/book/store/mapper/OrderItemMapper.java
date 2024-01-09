@@ -9,4 +9,6 @@ import org.mapstruct.Mapping;
 public interface OrderItemMapper {
     @Mapping(source = "book.id", target = "bookId")
     OrderItemDto mapToOrderItemDto(OrderItem orderItem);
+
+    OrderItem mapToOrderItemEntity(OrderItemDto orderItemDto);
 }

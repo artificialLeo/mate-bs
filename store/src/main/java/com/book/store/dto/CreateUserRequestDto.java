@@ -3,9 +3,10 @@ package com.book.store.dto;
 import com.book.store.validation.FieldMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
 @FieldMatch.List({
         @FieldMatch(
                 first = "password",
@@ -13,6 +14,9 @@ import lombok.Data;
                 message = "The password fields must match"
         )
 })
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateUserRequestDto {
     @NotBlank
     @Email
