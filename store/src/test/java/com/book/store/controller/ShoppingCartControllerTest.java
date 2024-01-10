@@ -110,3 +110,4 @@ class ShoppingCartControllerTest {
         result.andExpect(status().isAccepted());
     }
 }
+

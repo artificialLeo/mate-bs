@@ -219,3 +219,4 @@ public class CategoryControllerTest {
         assertTrue(categoryRepository.findById(1L).orElseThrow().isDeleted());
     }
 }
+

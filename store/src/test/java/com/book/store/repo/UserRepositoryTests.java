@@ -73,3 +73,4 @@ public class UserRepositoryTests {
         Assertions.assertTrue(foundUser.isEmpty());
     }
 }
+

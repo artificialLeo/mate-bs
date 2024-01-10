@@ -77,3 +77,4 @@ class UserServiceImplTest {
         verify(userMapper, never()).toCreateUserResponse(any());
     }
 }
+

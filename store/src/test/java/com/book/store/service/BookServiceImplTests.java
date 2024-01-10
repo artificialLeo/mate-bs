@@ -195,3 +195,4 @@ public class BookServiceImplTests {
         verify(bookMapper, times(0)).toDto(any());
     }
 }
+
