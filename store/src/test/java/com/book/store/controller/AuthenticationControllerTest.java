@@ -86,3 +86,4 @@ public class AuthenticationControllerTest {
         result.andExpect(status().isAccepted());
     }
 }
+

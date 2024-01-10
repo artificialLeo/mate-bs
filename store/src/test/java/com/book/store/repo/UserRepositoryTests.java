@@ -16,7 +16,7 @@ public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
-    User newUser;
+    private User newUser;
 
     @BeforeEach
     public void setUp() {
@@ -73,3 +73,4 @@ public class UserRepositoryTests {
         Assertions.assertTrue(foundUser.isEmpty());
     }
 }
+

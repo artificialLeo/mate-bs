@@ -37,3 +37,4 @@ public class RoleRepositoryTests {
         Assertions.assertEquals(expected, actual);
     }
 }
+
