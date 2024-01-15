@@ -77,4 +77,4 @@ The application employs Spring Security to manage authentication and authorizati
 
 For a collection of Postman requests and examples, refer to the `postman` directory in the project repository.
 
-Feel free to explore the API, and happy coding! 🚀
+Feel free to explore the API, and for a more detailed walkthrough, check out our [demo video](https://www.loom.com/share/35354910a8e84286ad1c9a4c6ecc357f). Happy coding! 🚀
