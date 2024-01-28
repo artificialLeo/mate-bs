@@ -5,10 +5,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: store
-      MYSQL_USER: root
       MYSQL_PASSWORD: root
     ports:
       - "3306:3306"
+    networks:
+      - store_default
 
   spring-app:
     build:
@@ -20,3 +21,11 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
     ports:
       - "8080:8080"
+    networks:
+      - store_default
+
+networks:
+  store_default:
+    external: true
+
+#sudo docker run -d -p 80:8080 public.ecr.aws/q0l1o8q5/bookstore:latest --spring.datasource.url=jdbc:mysql://mysql-container:3306/store --spring.datasource.username=root --spring.datasource.password=root
